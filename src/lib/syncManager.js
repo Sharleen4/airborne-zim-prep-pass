@@ -4,6 +4,11 @@
 import { offlineDB } from "./offlineDB";
 import { base44 } from "@/api/base44Client";
 
+function isLocalOfflinePreview() {
+  if (typeof window === "undefined") return false;
+  return ["localhost", "127.0.0.1", "::1"].includes(window.location.hostname);
+}
+
 // ─── Generic Entity Queueing ────────────────────────────────────────────────
 
 export async function queueEntity(entityName, operation, data) {
@@ -17,6 +22,7 @@ export async function queueEntity(entityName, operation, data) {
     timestamp: now,
     retry_count: 0,
   };
+  if (isLocalOfflinePreview()) return item;
   await offlineDB.putOne(offlineDB.STORES.pendingSync, item);
   return item;
 }
@@ -52,6 +58,11 @@ export async function queueTopicProgress(progressData) {
 // ─── Sync all pending items ─────────────────────────────────────────────────
 
 export async function syncPendingResults() {
+  if (isLocalOfflinePreview()) {
+    await offlineDB.clearStore(offlineDB.STORES.pendingSync);
+    return { synced: 0, failed: 0, details: [] };
+  }
+
   const pending = await offlineDB.getAll(offlineDB.STORES.pendingSync);
   if (!pending.length) return { synced: 0, failed: 0, details: [] };
 
@@ -103,6 +114,11 @@ export async function syncPendingResults() {
 }
 
 export async function getPendingCount() {
+  if (isLocalOfflinePreview()) {
+    await offlineDB.clearStore(offlineDB.STORES.pendingSync);
+    return 0;
+  }
+
   const pending = await offlineDB.getAll(offlineDB.STORES.pendingSync);
   return pending.length;
 }
