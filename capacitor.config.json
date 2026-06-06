@@ -1,0 +1,9 @@
+{
+  "appId": "com.zamaai.primary",
+  "appName": "Zamaai Primary",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  }
+}
