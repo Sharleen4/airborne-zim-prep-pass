@@ -1,10 +1,11 @@
 import { createClient } from '@base44/sdk';
 import { appParams } from '@/lib/app-params';
+import { withOfflineEntityFallback } from '@/lib/offlineEntityAdapter';
 
 const { appId, token, functionsVersion, appBaseUrl } = appParams;
 
 //Create a client with authentication required
-export const base44 = createClient({
+const base44Client = createClient({
   appId,
   token,
   functionsVersion,
@@ -12,3 +13,5 @@ export const base44 = createClient({
   requiresAuth: false,
   appBaseUrl
 });
+
+export const base44 = withOfflineEntityFallback(base44Client);

@@ -2,7 +2,7 @@
 // Falls back to in-memory store if IndexedDB is unavailable (e.g. restricted webviews)
 
 const DB_NAME = "zimexam_offline";
-const DB_VERSION = 6;
+const DB_VERSION = 7;
 
 const STORES = {
   subjects: "subjects",
@@ -16,6 +16,7 @@ const STORES = {
   diagrams: "diagrams",
   bookmarks: "bookmarks",
   practiceTests: "practiceTests",
+  entityRecords: "entityRecords",
 };
 
 // In-memory fallback used when IndexedDB is not available
@@ -52,7 +53,7 @@ function openDB() {
         const db = e.target.result;
         Object.values(STORES).forEach((store) => {
           if (!db.objectStoreNames.contains(store)) {
-            db.createObjectStore(store, { keyPath: "id" });
+            db.createObjectStore(store, { keyPath: store === STORES.entityRecords ? "cache_key" : "id" });
           }
         });
       };
@@ -203,4 +204,33 @@ export const offlineDB = {
   putOne,
   deleteOne,
   clearStore,
+  async getEntityRecords(entityName) {
+    const records = await getAll(STORES.entityRecords);
+    return records
+      .filter((record) => record.entity_name === entityName)
+      .map(({ cache_key, entity_name, cached_at, ...data }) => data);
+  },
+  async putEntityRecords(entityName, items) {
+    if (!items || items.length === 0) return;
+    const now = new Date().toISOString();
+    await putMany(
+      STORES.entityRecords,
+      items
+        .filter((item) => item?.id)
+        .map((item) => ({
+          ...item,
+          cache_key: `${entityName}:${item.id}`,
+          entity_name: entityName,
+          cached_at: now,
+        }))
+    );
+  },
+  async putEntityRecord(entityName, item) {
+    if (!item?.id) return;
+    return this.putEntityRecords(entityName, [item]);
+  },
+  async deleteEntityRecord(entityName, id) {
+    if (!id) return;
+    return deleteOne(STORES.entityRecords, `${entityName}:${id}`);
+  },
 };
