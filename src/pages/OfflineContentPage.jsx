@@ -51,9 +51,9 @@ export default function OfflineContentPage() {
     try {
       await fetchRemoteSubjects();
       await load();
-      setMessage("Subjects refreshed from Base44.");
+      setMessage("Subjects refreshed.");
     } catch (error) {
-      setMessage(error?.message || "Could not refresh from Base44.");
+      setMessage(error?.message || "Could not refresh content.");
     } finally {
       setRefreshing(false);
     }
@@ -86,7 +86,7 @@ export default function OfflineContentPage() {
           </div>
           <div>
             <h1 className="text-2xl font-extrabold">Offline Content</h1>
-            <p className="mt-1 text-sm text-white/75">Download Base44 subjects, notes, and questions for offline use.</p>
+            <p className="mt-1 text-sm text-white/75">Download subjects, notes, and questions for offline use.</p>
           </div>
         </div>
       </div>
