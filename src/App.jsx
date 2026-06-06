@@ -35,6 +35,7 @@ import ParentDashboardPage from './pages/ParentDashboardPage';
 import HomeworkPage from './pages/HomeworkPage';
 import ReviewQuestionsPage from './pages/ReviewQuestionsPage';
 import ProfilePage from './pages/ProfilePage';
+import OfflineContentPage from './pages/OfflineContentPage';
 import FlashcardsPage from './pages/FlashcardsPage';
 import ZimsecPapersPage from './pages/ZimsecPapersPage';
 import DeleteAccountPage from './pages/DeleteAccount';
@@ -141,6 +142,7 @@ function AnimatedRoutes() {
         <Route path="/homework" element={<PageTransition><HomeworkPage /></PageTransition>} />
         <Route path="/review-questions" element={<PageTransition><ReviewQuestionsPage /></PageTransition>} />
         <Route path="/profile" element={<PageTransition><ProfilePage /></PageTransition>} />
+        <Route path="/offline-content" element={<PageTransition><OfflineContentPage /></PageTransition>} />
         <Route path="/zimsec-papers" element={<PageTransition><ZimsecPapersPage /></PageTransition>} />
         <Route path="/delete-account" element={<PageTransition><DeleteAccountPage /></PageTransition>} />
         <Route path="/leaderboard" element={<PageTransition><LeaderboardPage /></PageTransition>} />

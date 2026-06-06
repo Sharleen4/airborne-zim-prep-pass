@@ -6,7 +6,7 @@ const navItems = [
   { to: "/practice", label: "Practice", icon: Zap, match: ["/practice"] },
   { to: "/mock-exam", label: "Exam", icon: FileText, match: ["/mock-exam"] },
   { to: "/progress", label: "Progress", icon: TrendingUp, match: ["/progress", "/leaderboard"] },
-  { to: "/profile", label: "Profile", icon: User, match: ["/profile", "/parent", "/homework", "/bookmarks"] },
+  { to: "/profile", label: "Profile", icon: User, match: ["/profile", "/parent", "/homework", "/bookmarks", "/offline-content"] },
 ];
 
 const hiddenPrefixes = [

@@ -2,7 +2,7 @@
 // Falls back to in-memory store if IndexedDB is unavailable (e.g. restricted webviews)
 
 const DB_NAME = "zimexam_offline";
-const DB_VERSION = 7;
+const DB_VERSION = 8;
 
 const STORES = {
   subjects: "subjects",
@@ -17,6 +17,7 @@ const STORES = {
   bookmarks: "bookmarks",
   practiceTests: "practiceTests",
   entityRecords: "entityRecords",
+  contentPackages: "contentPackages",
 };
 
 // In-memory fallback used when IndexedDB is not available

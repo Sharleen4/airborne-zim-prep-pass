@@ -4,7 +4,7 @@
 //   - Static assets (JS/CSS/fonts/images): cache-first, populated on first fetch
 //   - API calls (/api/, /functions/): always network (IndexedDB handles offline data layer)
 
-const VERSION = 'v13';
+const VERSION = 'v14';
 const SHELL_CACHE = `zamaai-shell-${VERSION}`;
 const ASSET_CACHE = `zamaai-assets-${VERSION}`;
 const IS_LOCAL_PREVIEW = ['localhost', '127.0.0.1', '::1'].includes(self.location.hostname);
