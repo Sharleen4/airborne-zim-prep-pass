@@ -1,0 +1,80 @@
+{
+  "name": "TeacherRecord",
+  "type": "object",
+  "properties": {
+    "teacher_email": {
+      "type": "string",
+      "description": "Email of the teacher who logged this record"
+    },
+    "school_id": {
+      "type": "string",
+      "description": "Reference to School.id"
+    },
+    "class_id": {
+      "type": "string",
+      "description": "Reference to SchoolClass.id"
+    },
+    "class_name": {
+      "type": "string",
+      "description": "Cached class name for quick display"
+    },
+    "student_name": {
+      "type": "string",
+      "description": "Name of the student this record is about"
+    },
+    "student_email": {
+      "type": "string",
+      "description": "Optional email of the student"
+    },
+    "record_type": {
+      "type": "string",
+      "enum": [
+        "test",
+        "exercise",
+        "exam",
+        "quiz",
+        "assignment",
+        "project",
+        "other"
+      ],
+      "default": "test",
+      "description": "Kind of assessment being recorded"
+    },
+    "title": {
+      "type": "string",
+      "description": "Title/name of the test, exam or exercise"
+    },
+    "subject": {
+      "type": "string"
+    },
+    "score": {
+      "type": "number",
+      "description": "Marks awarded"
+    },
+    "out_of": {
+      "type": "number",
+      "description": "Maximum possible marks"
+    },
+    "percentage": {
+      "type": "number",
+      "description": "Computed percentage score 0-100"
+    },
+    "date_taken": {
+      "type": "string",
+      "format": "date"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Optional teacher comments / context"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000
+    }
+  },
+  "required": [
+    "teacher_email",
+    "student_name",
+    "title"
+  ]
+}

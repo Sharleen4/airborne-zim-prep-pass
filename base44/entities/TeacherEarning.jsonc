@@ -1,0 +1,46 @@
+{
+  "name": "TeacherEarning",
+  "type": "object",
+  "properties": {
+    "teacher_email": {
+      "type": "string",
+      "description": "Email of the teacher who earned this"
+    },
+    "teacher_referral_code": {
+      "type": "string",
+      "description": "The referral code used"
+    },
+    "referred_user_email": {
+      "type": "string",
+      "description": "Email of the user who subscribed via the referral link"
+    },
+    "subscription_id": {
+      "type": "string",
+      "description": "ID of the subscription that triggered this earning"
+    },
+    "amount_earned": {
+      "type": "number",
+      "default": 2,
+      "description": "Amount earned in USD (default $2 per subscription)"
+    },
+    "payout_status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "paid"
+      ],
+      "default": "pending",
+      "description": "Whether this earning has been paid out"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Admin notes about this earning/payout"
+    }
+  },
+  "required": [
+    "teacher_email",
+    "teacher_referral_code",
+    "referred_user_email",
+    "amount_earned"
+  ]
+}

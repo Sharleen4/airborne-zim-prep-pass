@@ -1,0 +1,67 @@
+{
+  "name": "CurriculumReference",
+  "type": "object",
+  "properties": {
+    "subject_id": {
+      "type": "string",
+      "description": "Reference to Subject"
+    },
+    "topic_id": {
+      "type": "string",
+      "description": "Reference to Topic (optional)"
+    },
+    "title": {
+      "type": "string",
+      "description": "Title of the reference document"
+    },
+    "reference_type": {
+      "type": "string",
+      "enum": [
+        "syllabus",
+        "question_bank",
+        "notes_template",
+        "marking_scheme"
+      ],
+      "description": "Type of curriculum reference"
+    },
+    "file_url": {
+      "type": "string",
+      "description": "URL of uploaded file (PDF, CSV, TXT)"
+    },
+    "file_name": {
+      "type": "string",
+      "description": "Original file name"
+    },
+    "file_type": {
+      "type": "string",
+      "description": "e.g. pdf, csv, txt"
+    },
+    "extracted_text": {
+      "type": "string",
+      "description": "Text content extracted from the file for AI context"
+    },
+    "grade": {
+      "type": "string",
+      "enum": [
+        "Grade 4",
+        "Grade 5",
+        "Grade 6",
+        "Grade 7"
+      ]
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Short summary of this curriculum reference for search and metadata."
+    }
+  },
+  "required": [
+    "title",
+    "reference_type",
+    "file_url"
+  ]
+}

@@ -1,0 +1,107 @@
+{
+  "name": "StudyPlan",
+  "type": "object",
+  "properties": {
+    "parent_email": {
+      "type": "string",
+      "description": "Email of the parent who created this study plan"
+    },
+    "child_id": {
+      "type": "string",
+      "description": "Reference to ChildProfile.id"
+    },
+    "child_name": {
+      "type": "string",
+      "description": "Cached child name for quick display"
+    },
+    "name": {
+      "type": "string",
+      "description": "Name of the study plan e.g. 'Term 2 Revision'"
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "completed",
+        "archived"
+      ],
+      "default": "active"
+    },
+    "sessions": {
+      "type": "array",
+      "description": "Recurring weekly study sessions",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique id for this session within the plan"
+          },
+          "days_of_week": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "Days the session repeats (0=Sun, 6=Sat)"
+          },
+          "start_time": {
+            "type": "string",
+            "description": "Suggested start time in 24h format e.g. '16:00'"
+          },
+          "duration_minutes": {
+            "type": "number",
+            "description": "Duration of the session in minutes (any positive number)"
+          },
+          "goal_type": {
+            "type": "string",
+            "enum": [
+              "practice_questions",
+              "review_notes",
+              "mock_exam",
+              "flashcards"
+            ],
+            "description": "Activity type for this session"
+          },
+          "subject_id": {
+            "type": "string",
+            "description": "Subject focus for this session (optional)"
+          },
+          "topic_id": {
+            "type": "string",
+            "description": "Topic focus for this session (optional)"
+          },
+          "target_quantity": {
+            "type": "number",
+            "description": "Target count e.g. 10 questions, 1 topic"
+          },
+          "title": {
+            "type": "string",
+            "description": "Short label for the session e.g. 'Maths warm-up'"
+          }
+        },
+        "required": [
+          "duration_minutes",
+          "goal_type"
+        ]
+      }
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Short summary of this study plan for search and metadata."
+    }
+  },
+  "required": [
+    "parent_email",
+    "child_id",
+    "name"
+  ]
+}

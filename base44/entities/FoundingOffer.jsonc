@@ -1,0 +1,32 @@
+{
+  "name": "FoundingOffer",
+  "type": "object",
+  "properties": {
+    "total_slots": {
+      "type": "number",
+      "default": 100,
+      "description": "Total number of founding student slots available (admin can increase this)"
+    },
+    "slots_used": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of confirmed paid founding students"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether the founding offer is currently active"
+    },
+    "price_usd": {
+      "type": "number",
+      "default": 7,
+      "description": "Price in USD for the founding offer"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Short summary of this founding offer for search and metadata."
+    }
+  },
+  "required": []
+}

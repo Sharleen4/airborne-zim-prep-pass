@@ -1,0 +1,43 @@
+{
+  "name": "ChildProfile",
+  "type": "object",
+  "properties": {
+    "parent_email": {
+      "type": "string",
+      "description": "Email of the parent who manages this profile"
+    },
+    "child_name": {
+      "type": "string",
+      "description": "Child's first name"
+    },
+    "grade": {
+      "type": "string",
+      "enum": [
+        "Grade 4",
+        "Grade 5",
+        "Grade 6",
+        "Grade 7"
+      ],
+      "description": "Child's current grade"
+    },
+    "avatar_emoji": {
+      "type": "string",
+      "description": "Emoji avatar chosen for the child",
+      "default": "\ud83e\uddd2"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Short summary of this child profile for search and metadata."
+    }
+  },
+  "required": [
+    "parent_email",
+    "child_name",
+    "grade"
+  ]
+}

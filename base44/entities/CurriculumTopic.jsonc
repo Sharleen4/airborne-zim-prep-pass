@@ -1,0 +1,98 @@
+{
+  "name": "CurriculumTopic",
+  "type": "object",
+  "properties": {
+    "subject": {
+      "type": "string",
+      "description": "Subject name e.g. Mathematics"
+    },
+    "grade": {
+      "type": "string",
+      "enum": [
+        "Grade 4",
+        "Grade 5",
+        "Grade 6",
+        "Grade 7"
+      ],
+      "description": "Grade level"
+    },
+    "topic": {
+      "type": "string",
+      "description": "Main topic \u2014 drawn from the key syllabus concept e.g. Fractions"
+    },
+    "subtopic": {
+      "type": "string",
+      "description": "Subtopic e.g. Equivalent Fractions"
+    },
+    "content": {
+      "type": "string",
+      "description": "Short explanation of what this key topic / concept is about"
+    },
+    "suggested_resources": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Suggested teaching/learning materials and resources (textbooks, charts, digital tools, etc.)"
+    },
+    "learning_objectives": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of learning objectives"
+    },
+    "suggested_activities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of suggested classroom activities"
+    },
+    "heritage_based_competencies": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Heritage-Based Curriculum competencies"
+    },
+    "assessment_suggestions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Suggested assessment methods"
+    },
+    "term": {
+      "type": "number",
+      "description": "Term number (1, 2, or 3)"
+    },
+    "week": {
+      "type": "number",
+      "description": "Week number within the term"
+    },
+    "curriculum_code": {
+      "type": "string",
+      "description": "Official curriculum code e.g. M5.2.3"
+    },
+    "view_count": {
+      "type": "number",
+      "default": 0,
+      "description": "How many times teachers viewed this topic"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Short summary of this curriculum topic for search and metadata."
+    }
+  },
+  "required": [
+    "subject",
+    "grade",
+    "topic"
+  ]
+}

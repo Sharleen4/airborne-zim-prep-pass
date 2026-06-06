@@ -1,0 +1,79 @@
+{
+  "name": "Subscription",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "The email of the subscribed user"
+    },
+    "plan": {
+      "type": "string",
+      "enum": [
+        "monthly",
+        "termly",
+        "annual",
+        "premium_monthly",
+        "premium_termly",
+        "premium_annual",
+        "premium",
+        "referral_premium",
+        "founding_2026",
+        "quarterly",
+        "yearly_premium",
+        "monthly_premium",
+        "family_quarterly",
+        "family_yearly"
+      ],
+      "description": "Subscription plan chosen"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "active",
+        "expired"
+      ],
+      "default": "pending"
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "paynow_reference": {
+      "type": "string"
+    },
+    "amount_paid": {
+      "type": "number"
+    },
+    "is_premium": {
+      "type": "boolean",
+      "default": false
+    },
+    "is_family": {
+      "type": "boolean",
+      "default": false,
+      "description": "Family plan \u2014 supports multiple children"
+    },
+    "max_children": {
+      "type": "number",
+      "default": 1,
+      "description": "Maximum number of child profiles allowed on this plan"
+    },
+    "teacher_referral_code": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Short summary of this subscription for search and metadata."
+    }
+  },
+  "required": [
+    "user_email",
+    "plan"
+  ]
+}

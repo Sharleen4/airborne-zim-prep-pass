@@ -1,0 +1,40 @@
+{
+  "name": "Topic",
+  "type": "object",
+  "properties": {
+    "subject_id": {
+      "type": "string",
+      "description": "Reference to Subject"
+    },
+    "name": {
+      "type": "string",
+      "description": "Topic name e.g. Identity"
+    },
+    "order": {
+      "type": "number",
+      "description": "Display order"
+    },
+    "learning_objectives": {
+      "type": "string",
+      "description": "What students will learn"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "is_free": {
+      "type": "boolean",
+      "default": false,
+      "description": "If true, free-plan users can access this topic. English topics + a few starter topics per subject should be marked free."
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Short summary of this topic for search and metadata."
+    }
+  },
+  "required": [
+    "subject_id",
+    "name"
+  ]
+}

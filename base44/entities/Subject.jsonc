@@ -1,0 +1,39 @@
+{
+  "name": "Subject",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Subject name e.g. Mathematics"
+    },
+    "grade": {
+      "type": "string",
+      "enum": [
+        "Grade 7",
+        "Grade 6",
+        "Grade 5",
+        "Grade 4"
+      ],
+      "description": "Grade level"
+    },
+    "icon": {
+      "type": "string",
+      "description": "Emoji icon for the subject"
+    },
+    "color": {
+      "type": "string",
+      "description": "Tailwind color class"
+    },
+    "description": {
+      "type": "string"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": [
+    "name",
+    "grade"
+  ]
+}

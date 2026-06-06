@@ -1,0 +1,41 @@
+{
+  "name": "NotificationTemplate",
+  "type": "object",
+  "properties": {
+    "template_type": {
+      "type": "string",
+      "enum": [
+        "welcome",
+        "inactivity_alert",
+        "low_score_alert",
+        "improvement_praise",
+        "homework_completed",
+        "trial_expiry_reminder",
+        "payment_confirmation"
+      ],
+      "description": "The trigger type this template is used for"
+    },
+    "template_name": {
+      "type": "string",
+      "description": "Friendly name for the template"
+    },
+    "message_content": {
+      "type": "string",
+      "description": "Message body. Use placeholders: {{child_name}}, {{subject}}, {{topic}}, {{score}}, {{trial_days_remaining}}, {{parent_name}}, {{payment_link}}"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this template is currently in use"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Short summary of this notification template for search and metadata."
+    }
+  },
+  "required": [
+    "template_type",
+    "message_content"
+  ]
+}

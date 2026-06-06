@@ -1,0 +1,151 @@
+{
+  "name": "LearningCard",
+  "type": "object",
+  "properties": {
+    "subject_id": {
+      "type": "string",
+      "description": "Reference to Subject (English)"
+    },
+    "topic_id": {
+      "type": "string",
+      "description": "Reference to Topic"
+    },
+    "grade": {
+      "type": "string",
+      "enum": [
+        "Grade 4",
+        "Grade 5",
+        "Grade 6",
+        "Grade 7"
+      ]
+    },
+    "skill": {
+      "type": "string",
+      "enum": [
+        "comprehension",
+        "composition",
+        "grammar",
+        "vocabulary",
+        "synonyms",
+        "antonyms",
+        "similes",
+        "adjectives",
+        "parts_of_speech",
+        "poetry",
+        "summary",
+        "letter_writing",
+        "reading_fluency",
+        "sentence_construction",
+        "functional_writing"
+      ],
+      "description": "English skill area"
+    },
+    "card_type": {
+      "type": "string",
+      "enum": [
+        "flashcard",
+        "match_pairs",
+        "fill_blank",
+        "mcq",
+        "true_false",
+        "drag_order",
+        "sentence_correction",
+        "tap_word"
+      ],
+      "default": "flashcard",
+      "description": "Type of interactive activity"
+    },
+    "title": {
+      "type": "string",
+      "description": "Short card title"
+    },
+    "explanation": {
+      "type": "string",
+      "description": "Tiny 1-2 sentence explanation shown at top"
+    },
+    "example": {
+      "type": "string",
+      "description": "Short Zimbabwean example"
+    },
+    "front": {
+      "type": "string",
+      "description": "Flashcard front / prompt"
+    },
+    "back": {
+      "type": "string",
+      "description": "Flashcard back / answer"
+    },
+    "pairs": {
+      "type": "array",
+      "description": "For match_pairs: [{left, right}]",
+      "items": {
+        "type": "object",
+        "properties": {
+          "left": {
+            "type": "string"
+          },
+          "right": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "options": {
+      "type": "array",
+      "description": "For MCQ / true_false / sentence_correction",
+      "items": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "correct_answer": {
+      "type": "string",
+      "description": "Correct option label or text"
+    },
+    "items_order": {
+      "type": "array",
+      "description": "For drag_order: correct sequence of words/phrases",
+      "items": {
+        "type": "string"
+      }
+    },
+    "feedback_correct": {
+      "type": "string",
+      "description": "Short prebuilt feedback for correct answer"
+    },
+    "feedback_incorrect": {
+      "type": "string",
+      "description": "Short prebuilt feedback for incorrect answer"
+    },
+    "xp_reward": {
+      "type": "number",
+      "default": 5
+    },
+    "order": {
+      "type": "number",
+      "default": 0
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Short summary of this learning card for search and metadata."
+    }
+  },
+  "required": [
+    "grade",
+    "skill",
+    "card_type",
+    "title"
+  ]
+}

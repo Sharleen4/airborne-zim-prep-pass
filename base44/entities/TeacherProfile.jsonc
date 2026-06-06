@@ -1,0 +1,47 @@
+{
+  "name": "TeacherProfile",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Email of the teacher (User with role=teacher)"
+    },
+    "school_id": {
+      "type": "string",
+      "description": "Reference to School.id this teacher belongs to"
+    },
+    "full_name": {
+      "type": "string",
+      "description": "Teacher's full name (cached from User)"
+    },
+    "subjects_taught": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Subject IDs this teacher specialises in"
+    },
+    "qualifications": {
+      "type": "string"
+    },
+    "bio": {
+      "type": "string"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Short summary of this teacher profile for search and metadata."
+    }
+  },
+  "required": [
+    "user_email",
+    "school_id"
+  ]
+}

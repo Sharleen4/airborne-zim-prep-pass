@@ -1,0 +1,69 @@
+{
+  "name": "NotificationLog",
+  "type": "object",
+  "properties": {
+    "parent_id": {
+      "type": "string",
+      "description": "Reference to ParentProfile.id"
+    },
+    "child_id": {
+      "type": "string",
+      "description": "Reference to ChildProfile.id"
+    },
+    "parent_whatsapp_number": {
+      "type": "string",
+      "description": "Cached WhatsApp number the message was sent to"
+    },
+    "notification_type": {
+      "type": "string",
+      "enum": [
+        "welcome",
+        "inactivity_alert",
+        "low_score_alert",
+        "improvement_praise",
+        "homework_completed",
+        "trial_expiry_reminder",
+        "payment_confirmation"
+      ],
+      "description": "Type of notification sent"
+    },
+    "notification_message": {
+      "type": "string",
+      "description": "Full message content that was sent"
+    },
+    "sent_status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "sent",
+        "failed",
+        "delivered"
+      ],
+      "default": "pending",
+      "description": "Delivery status of the notification"
+    },
+    "sent_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when the notification was sent"
+    },
+    "whatsapp_api_response": {
+      "type": "string",
+      "description": "Raw response from the WhatsApp API or webhook"
+    },
+    "trial_days_remaining": {
+      "type": "number",
+      "description": "Number of trial days remaining at time of notification"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Short summary of this notification log for search and metadata."
+    }
+  },
+  "required": [
+    "parent_id",
+    "child_id",
+    "notification_type"
+  ]
+}

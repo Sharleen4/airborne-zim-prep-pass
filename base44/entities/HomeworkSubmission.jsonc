@@ -1,0 +1,94 @@
+{
+  "name": "HomeworkSubmission",
+  "type": "object",
+  "properties": {
+    "homework_id": {
+      "type": "string",
+      "description": "Reference to SchoolHomework.id"
+    },
+    "student_email": {
+      "type": "string",
+      "description": "Email of the student who submitted"
+    },
+    "student_name": {
+      "type": "string",
+      "description": "Cached student name for quick display"
+    },
+    "class_id": {
+      "type": "string"
+    },
+    "school_id": {
+      "type": "string"
+    },
+    "submission_date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "submitted",
+        "graded",
+        "late"
+      ],
+      "default": "pending"
+    },
+    "submission_text": {
+      "type": "string",
+      "description": "Free-text answer from the student"
+    },
+    "submission_file_url": {
+      "type": "string",
+      "description": "URL to an uploaded file (PDF, image of handwritten work, etc.)"
+    },
+    "answers": {
+      "type": "array",
+      "description": "Student answers to structured questions (auto-marked exercises)",
+      "items": {
+        "type": "object",
+        "properties": {
+          "question_id": {
+            "type": "string"
+          },
+          "answer": {
+            "type": "string",
+            "description": "The student's answer text / chosen option"
+          },
+          "is_correct": {
+            "type": "boolean",
+            "description": "Auto-marking result for this question"
+          },
+          "marks_awarded": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "question_id",
+          "answer"
+        ]
+      }
+    },
+    "auto_score": {
+      "type": "number",
+      "description": "Auto-marking score as a percentage (0-100). Hidden from student until teacher releases."
+    },
+    "grade": {
+      "type": "number",
+      "description": "Final score awarded (percentage 0-100). For auto-marked exercises this equals auto_score after release."
+    },
+    "feedback": {
+      "type": "string",
+      "description": "Teacher's feedback / comments"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Short summary of this submission for search and metadata."
+    }
+  },
+  "required": [
+    "homework_id",
+    "student_email"
+  ]
+}

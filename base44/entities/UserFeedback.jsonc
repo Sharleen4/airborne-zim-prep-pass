@@ -1,0 +1,53 @@
+{
+  "name": "UserFeedback",
+  "type": "object",
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": [
+        "bug_report",
+        "feature_request",
+        "suggestion",
+        "other"
+      ],
+      "description": "Type of feedback"
+    },
+    "subject": {
+      "type": "string",
+      "description": "Short title/subject of the feedback"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed description"
+    },
+    "page_or_feature": {
+      "type": "string",
+      "description": "Which page or feature this relates to"
+    },
+    "reported_by": {
+      "type": "string",
+      "description": "User email"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "new",
+        "under_review",
+        "resolved",
+        "closed"
+      ],
+      "default": "new",
+      "description": "Admin review status"
+    },
+    "admin_notes": {
+      "type": "string",
+      "description": "Internal admin notes"
+    }
+  },
+  "required": [
+    "type",
+    "subject",
+    "description",
+    "reported_by"
+  ]
+}

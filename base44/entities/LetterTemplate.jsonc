@@ -1,0 +1,70 @@
+{
+  "name": "LetterTemplate",
+  "type": "object",
+  "properties": {
+    "subject_id": {
+      "type": "string"
+    },
+    "topic_id": {
+      "type": "string"
+    },
+    "grade": {
+      "type": "string",
+      "enum": [
+        "Grade 4",
+        "Grade 5",
+        "Grade 6",
+        "Grade 7"
+      ]
+    },
+    "letter_type": {
+      "type": "string",
+      "enum": [
+        "informal",
+        "formal",
+        "friendly",
+        "thank_you",
+        "invitation"
+      ],
+      "default": "informal"
+    },
+    "title": {
+      "type": "string"
+    },
+    "scenario": {
+      "type": "string",
+      "description": "Short scenario/prompt for the letter"
+    },
+    "parts": {
+      "type": "array",
+      "description": "Correctly-ordered parts of the letter the learner must arrange",
+      "items": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "description": "e.g. address, date, greeting, body, closing, signature"
+          },
+          "text": {
+            "type": "string",
+            "description": "Sample text for that part"
+          }
+        }
+      }
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Short summary of this letter template for search and metadata."
+    }
+  },
+  "required": [
+    "grade",
+    "title",
+    "parts"
+  ]
+}

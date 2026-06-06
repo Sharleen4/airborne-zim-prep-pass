@@ -1,0 +1,51 @@
+{
+  "name": "EmailLog",
+  "type": "object",
+  "properties": {
+    "recipient_email": {
+      "type": "string",
+      "description": "The email address of the recipient"
+    },
+    "parent_name": {
+      "type": "string",
+      "description": "Name of the parent recipient"
+    },
+    "email_type": {
+      "type": "string",
+      "description": "The type of email sent"
+    },
+    "subject": {
+      "type": "string",
+      "description": "The subject line of the email sent"
+    },
+    "sent_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when the email was sent"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "sent",
+        "failed"
+      ],
+      "default": "sent",
+      "description": "Delivery status of the email"
+    },
+    "error_message": {
+      "type": "string",
+      "description": "Details if the email failed to send"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Short summary of this email log for search and metadata."
+    }
+  },
+  "required": [
+    "recipient_email",
+    "email_type",
+    "subject",
+    "sent_date"
+  ]
+}

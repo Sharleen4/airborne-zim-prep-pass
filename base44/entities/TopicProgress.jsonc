@@ -1,0 +1,47 @@
+{
+  "name": "TopicProgress",
+  "type": "object",
+  "properties": {
+    "student_email": {
+      "type": "string"
+    },
+    "child_id": {
+      "type": "string",
+      "description": "Which child profile this progress belongs to (for multi-child family plans)"
+    },
+    "topic_id": {
+      "type": "string"
+    },
+    "subject_id": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "not_started",
+        "studied",
+        "needs_revision"
+      ],
+      "default": "not_started"
+    },
+    "studied_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date marked as studied"
+    },
+    "last_score": {
+      "type": "number",
+      "description": "Last practice score percentage"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Short summary of this progress record for search and metadata."
+    }
+  },
+  "required": [
+    "student_email",
+    "topic_id",
+    "status"
+  ]
+}

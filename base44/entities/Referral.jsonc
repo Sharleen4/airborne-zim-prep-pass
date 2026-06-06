@@ -1,0 +1,32 @@
+{
+  "name": "Referral",
+  "type": "object",
+  "properties": {
+    "referrer_email": {
+      "type": "string",
+      "description": "Email of the user who sent the referral"
+    },
+    "referred_email": {
+      "type": "string",
+      "description": "Email of the user who was referred"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "completed"
+      ],
+      "default": "pending",
+      "description": "Whether the referred user has signed up"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Short summary of this referral for search and metadata."
+    }
+  },
+  "required": [
+    "referrer_email",
+    "referred_email"
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "name": "EnglishProgress",
+  "type": "object",
+  "properties": {
+    "student_email": {
+      "type": "string"
+    },
+    "grade": {
+      "type": "string"
+    },
+    "skill": {
+      "type": "string",
+      "enum": [
+        "comprehension",
+        "composition",
+        "grammar",
+        "vocabulary",
+        "synonyms",
+        "antonyms",
+        "similes",
+        "adjectives",
+        "parts_of_speech",
+        "poetry",
+        "summary",
+        "letter_writing",
+        "reading_fluency",
+        "sentence_construction",
+        "functional_writing"
+      ]
+    },
+    "topic_id": {
+      "type": "string"
+    },
+    "cards_completed": {
+      "type": "number",
+      "default": 0
+    },
+    "cards_correct": {
+      "type": "number",
+      "default": 0
+    },
+    "xp_earned": {
+      "type": "number",
+      "default": 0
+    },
+    "streak_days": {
+      "type": "number",
+      "default": 0
+    },
+    "last_active_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "badges": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Earned badge codes e.g. grammar_master, reading_champion"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Short summary of this English progress record for search and metadata."
+    }
+  },
+  "required": [
+    "student_email",
+    "skill"
+  ]
+}

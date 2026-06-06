@@ -1,0 +1,47 @@
+{
+  "name": "QuestionReport",
+  "type": "object",
+  "properties": {
+    "question_id": {
+      "type": "string"
+    },
+    "question_text": {
+      "type": "string"
+    },
+    "topic_id": {
+      "type": "string"
+    },
+    "reported_by": {
+      "type": "string",
+      "description": "User email"
+    },
+    "reason": {
+      "type": "string",
+      "enum": [
+        "Wrong answer",
+        "Unclear question",
+        "Incorrect options",
+        "Spelling/grammar error",
+        "Other"
+      ],
+      "description": "Reason for report"
+    },
+    "details": {
+      "type": "string",
+      "description": "Optional extra details"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "reviewed",
+        "resolved"
+      ],
+      "default": "pending"
+    }
+  },
+  "required": [
+    "question_id",
+    "reason"
+  ]
+}

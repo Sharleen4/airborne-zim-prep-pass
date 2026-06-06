@@ -1,0 +1,62 @@
+{
+  "name": "ParentProfile",
+  "type": "object",
+  "properties": {
+    "parent_name": {
+      "type": "string",
+      "description": "Full name of the parent or guardian"
+    },
+    "parent_whatsapp_number": {
+      "type": "string",
+      "description": "WhatsApp number in international format e.g. +263771234567"
+    },
+    "child_id": {
+      "type": "string",
+      "description": "Reference to ChildProfile.id"
+    },
+    "user_email": {
+      "type": "string",
+      "description": "Email of the linked app user account"
+    },
+    "free_trial_start_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date the free trial started"
+    },
+    "free_trial_end_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date the free trial ends"
+    },
+    "subscription_status": {
+      "type": "string",
+      "enum": [
+        "trial",
+        "active",
+        "expired"
+      ],
+      "default": "trial",
+      "description": "Current subscription status"
+    },
+    "payment_status": {
+      "type": "string",
+      "enum": [
+        "unpaid",
+        "paid",
+        "pending",
+        "refunded"
+      ],
+      "default": "unpaid",
+      "description": "Payment status"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Short summary of this parent profile for search and metadata."
+    }
+  },
+  "required": [
+    "parent_name",
+    "user_email"
+  ]
+}

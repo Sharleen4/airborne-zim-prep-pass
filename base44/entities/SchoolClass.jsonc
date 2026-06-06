@@ -1,0 +1,62 @@
+{
+  "name": "SchoolClass",
+  "type": "object",
+  "properties": {
+    "school_id": {
+      "type": "string",
+      "description": "Reference to School.id"
+    },
+    "name": {
+      "type": "string",
+      "description": "Class name e.g. 'Grade 5A', 'Maths 7 - Blue Stream'"
+    },
+    "grade": {
+      "type": "string",
+      "enum": [
+        "Grade 4",
+        "Grade 5",
+        "Grade 6",
+        "Grade 7"
+      ],
+      "description": "Grade level of the class"
+    },
+    "teacher_email": {
+      "type": "string",
+      "description": "Email of the primary teacher (User with role=teacher) assigned to this class"
+    },
+    "student_emails": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Emails of students (Users with role=student) belonging to this class"
+    },
+    "academic_year": {
+      "type": "string",
+      "description": "Academic year e.g. '2026'"
+    },
+    "invite_code": {
+      "type": "string",
+      "description": "Short shareable code used by parents to request to join this class"
+    },
+    "invite_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether the invite link is currently accepting new join requests"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Short summary of this class for search and metadata."
+    }
+  },
+  "required": [
+    "school_id",
+    "name",
+    "grade"
+  ]
+}

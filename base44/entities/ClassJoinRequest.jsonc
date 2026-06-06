@@ -1,0 +1,89 @@
+{
+  "name": "ClassJoinRequest",
+  "type": "object",
+  "properties": {
+    "class_id": {
+      "type": "string",
+      "description": "Reference to SchoolClass.id"
+    },
+    "class_name": {
+      "type": "string",
+      "description": "Cached class name for quick display"
+    },
+    "school_id": {
+      "type": "string",
+      "description": "Reference to School.id"
+    },
+    "teacher_email": {
+      "type": "string",
+      "description": "Email of the teacher who owns the class"
+    },
+    "invite_code": {
+      "type": "string",
+      "description": "Short code matching SchoolClass.invite_code that was used to submit this request"
+    },
+    "parent_email": {
+      "type": "string",
+      "description": "Email of the parent who submitted the request (cached from logged-in user)"
+    },
+    "parent_name": {
+      "type": "string",
+      "description": "Cached parent display name"
+    },
+    "child_id": {
+      "type": "string",
+      "description": "Reference to ChildProfile.id of the child being added"
+    },
+    "student_name": {
+      "type": "string",
+      "description": "Full name of the student being added"
+    },
+    "student_email": {
+      "type": "string",
+      "description": "Email of the student account that will receive class access (defaults to parent email if the child has no own login)"
+    },
+    "grade": {
+      "type": "string",
+      "enum": [
+        "Grade 4",
+        "Grade 5",
+        "Grade 6",
+        "Grade 7"
+      ],
+      "description": "Grade level submitted by the parent"
+    },
+    "grade_verified": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the parent confirmed the grade matches the class grade"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "approved",
+        "rejected",
+        "cancelled"
+      ],
+      "default": "pending"
+    },
+    "rejection_reason": {
+      "type": "string"
+    },
+    "approved_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Short summary of this join request for search and metadata."
+    }
+  },
+  "required": [
+    "class_id",
+    "teacher_email",
+    "student_name",
+    "grade"
+  ]
+}

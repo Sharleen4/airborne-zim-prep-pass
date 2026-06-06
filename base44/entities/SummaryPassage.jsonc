@@ -1,0 +1,53 @@
+{
+  "name": "SummaryPassage",
+  "type": "object",
+  "properties": {
+    "subject_id": {
+      "type": "string"
+    },
+    "topic_id": {
+      "type": "string"
+    },
+    "grade": {
+      "type": "string",
+      "enum": [
+        "Grade 4",
+        "Grade 5",
+        "Grade 6",
+        "Grade 7"
+      ]
+    },
+    "title": {
+      "type": "string"
+    },
+    "passage": {
+      "type": "string"
+    },
+    "key_points": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Sentences that should appear in a correct summary"
+    },
+    "max_summary_words": {
+      "type": "number",
+      "default": 60
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Short summary of this passage for search and metadata."
+    }
+  },
+  "required": [
+    "grade",
+    "title",
+    "passage",
+    "key_points"
+  ]
+}

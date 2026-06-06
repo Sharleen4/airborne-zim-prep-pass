@@ -1,0 +1,32 @@
+{
+  "name": "UserSession",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Email of the user who logged in"
+    },
+    "user_role": {
+      "type": "string",
+      "description": "Role at the time of login (admin, user, teacher)"
+    },
+    "session_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of the session in YYYY-MM-DD format (one record per user per day)"
+    },
+    "user_agent": {
+      "type": "string",
+      "description": "Browser / device user agent string"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Short summary of this session record for search and metadata."
+    }
+  },
+  "required": [
+    "user_email",
+    "session_date"
+  ]
+}

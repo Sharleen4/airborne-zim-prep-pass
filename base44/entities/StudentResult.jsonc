@@ -1,0 +1,76 @@
+{
+  "name": "StudentResult",
+  "type": "object",
+  "properties": {
+    "student_email": {
+      "type": "string"
+    },
+    "child_id": {
+      "type": "string",
+      "description": "Which child profile this result belongs to (for multi-child family plans)"
+    },
+    "subject_id": {
+      "type": "string"
+    },
+    "topic_id": {
+      "type": "string"
+    },
+    "mock_exam_id": {
+      "type": "string"
+    },
+    "session_type": {
+      "type": "string",
+      "enum": [
+        "practice",
+        "topic_test",
+        "mock_exam"
+      ]
+    },
+    "score": {
+      "type": "number"
+    },
+    "total": {
+      "type": "number"
+    },
+    "percentage": {
+      "type": "number"
+    },
+    "answers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "question_id": {
+            "type": "string"
+          },
+          "selected_answer": {
+            "type": "string"
+          },
+          "is_correct": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "time_taken_seconds": {
+      "type": "number"
+    },
+    "weak_topics": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Short summary of this result for search and metadata."
+    }
+  },
+  "required": [
+    "student_email",
+    "session_type",
+    "score",
+    "total"
+  ]
+}

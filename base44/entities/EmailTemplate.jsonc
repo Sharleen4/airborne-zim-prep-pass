@@ -1,0 +1,47 @@
+{
+  "name": "EmailTemplate",
+  "type": "object",
+  "properties": {
+    "template_type": {
+      "type": "string",
+      "enum": [
+        "welcome",
+        "weekly_summary",
+        "inactivity_alert",
+        "low_score_alert",
+        "improvement_praise",
+        "trial_expiry_reminder",
+        "payment_confirmation",
+        "feature_announcement"
+      ],
+      "description": "The trigger type this email template is used for"
+    },
+    "template_name": {
+      "type": "string",
+      "description": "Friendly name for the template"
+    },
+    "subject": {
+      "type": "string",
+      "description": "Email subject line. Supports placeholders: {{child_name}}, {{parent_name}}, {{subject}}, {{topic}}, {{score}}, {{trial_days_remaining}}, {{payment_link}}"
+    },
+    "body_html": {
+      "type": "string",
+      "description": "HTML body of the email. Supports same placeholders as subject."
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this template is currently in use"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Short summary of this email template for search and metadata."
+    }
+  },
+  "required": [
+    "template_type",
+    "subject",
+    "body_html"
+  ]
+}

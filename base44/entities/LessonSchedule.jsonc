@@ -1,0 +1,84 @@
+{
+  "name": "LessonSchedule",
+  "type": "object",
+  "properties": {
+    "teacher_email": {
+      "type": "string",
+      "description": "Email of the teacher who scheduled this lesson"
+    },
+    "school_id": {
+      "type": "string",
+      "description": "Reference to School.id"
+    },
+    "class_id": {
+      "type": "string",
+      "description": "Reference to SchoolClass.id"
+    },
+    "class_name": {
+      "type": "string",
+      "description": "Cached class name for quick display"
+    },
+    "saved_lesson_id": {
+      "type": "string",
+      "description": "Reference to SavedLesson.id"
+    },
+    "lesson_title": {
+      "type": "string",
+      "description": "Cached lesson title for quick display"
+    },
+    "subject": {
+      "type": "string",
+      "description": "Cached subject name for quick display"
+    },
+    "grade": {
+      "type": "string",
+      "enum": [
+        "Grade 4",
+        "Grade 5",
+        "Grade 6",
+        "Grade 7"
+      ]
+    },
+    "scheduled_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date the lesson is scheduled to be delivered (YYYY-MM-DD)"
+    },
+    "start_time": {
+      "type": "string",
+      "description": "Optional start time in 24h HH:mm format e.g. '09:30'"
+    },
+    "duration_minutes": {
+      "type": "number",
+      "description": "Optional lesson duration in minutes"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "scheduled",
+        "delivered",
+        "cancelled"
+      ],
+      "default": "scheduled"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Optional notes from the teacher about this scheduled lesson"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Short summary of this scheduled lesson for search and metadata."
+    }
+  },
+  "required": [
+    "teacher_email",
+    "class_id",
+    "saved_lesson_id",
+    "scheduled_date"
+  ]
+}

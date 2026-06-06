@@ -1,0 +1,65 @@
+{
+  "name": "Poem",
+  "type": "object",
+  "properties": {
+    "subject_id": {
+      "type": "string"
+    },
+    "topic_id": {
+      "type": "string"
+    },
+    "grade": {
+      "type": "string",
+      "enum": [
+        "Grade 4",
+        "Grade 5",
+        "Grade 6",
+        "Grade 7"
+      ]
+    },
+    "title": {
+      "type": "string"
+    },
+    "author": {
+      "type": "string"
+    },
+    "text": {
+      "type": "string",
+      "description": "Full poem text with line breaks"
+    },
+    "theme": {
+      "type": "string"
+    },
+    "vocabulary": {
+      "type": "array",
+      "description": "Word -> meaning pairs from the poem",
+      "items": {
+        "type": "object",
+        "properties": {
+          "word": {
+            "type": "string"
+          },
+          "meaning": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "question_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "References to Question entity (meaning, rhythm, similes)"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": [
+    "grade",
+    "title",
+    "text"
+  ]
+}

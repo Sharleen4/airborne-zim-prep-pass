@@ -1,0 +1,173 @@
+{
+  "name": "SchoolHomework",
+  "type": "object",
+  "properties": {
+    "teacher_email": {
+      "type": "string",
+      "description": "Email of the teacher who created this exercise"
+    },
+    "school_id": {
+      "type": "string",
+      "description": "Reference to School.id"
+    },
+    "class_id": {
+      "type": "string",
+      "description": "Reference to SchoolClass.id"
+    },
+    "subject_id": {
+      "type": "string",
+      "description": "Reference to Subject.id"
+    },
+    "grade": {
+      "type": "string",
+      "enum": [
+        "Grade 4",
+        "Grade 5",
+        "Grade 6",
+        "Grade 7"
+      ]
+    },
+    "title": {
+      "type": "string"
+    },
+    "instructions": {
+      "type": "string",
+      "description": "Rich text / markdown instructions for the student"
+    },
+    "due_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "assigned_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date the exercise was assigned (defaults to today)"
+    },
+    "topic_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Optional topic references for AI-assisted practice"
+    },
+    "exercise_type": {
+      "type": "string",
+      "enum": [
+        "homework",
+        "class_exercise",
+        "test",
+        "quiz",
+        "assignment",
+        "revision",
+        "mock_exam"
+      ],
+      "default": "homework",
+      "description": "Kind of exercise being assigned"
+    },
+    "difficulty": {
+      "type": "string",
+      "enum": [
+        "easy",
+        "medium",
+        "hard",
+        "mixed"
+      ],
+      "default": "mixed",
+      "description": "Difficulty level of the exercise overall"
+    },
+    "duration_minutes": {
+      "type": "number",
+      "description": "Time limit in minutes (used by timed exercises e.g. mock_exam, test, quiz)"
+    },
+    "auto_marked": {
+      "type": "boolean",
+      "default": false,
+      "description": "If true, the system auto-marks structured questions (MCQ, fill-in, true/false, short answer)"
+    },
+    "release_answers": {
+      "type": "boolean",
+      "default": false,
+      "description": "If true, students may see correct answers and per-question results after submitting. Default hidden until teacher releases."
+    },
+    "questions": {
+      "type": "array",
+      "description": "Structured questions for auto-marking. Empty for free-text exercises.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Stable client-generated id for this question"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "mcq",
+              "fill_blank",
+              "true_false",
+              "short_answer"
+            ],
+            "description": "Question format"
+          },
+          "prompt": {
+            "type": "string",
+            "description": "Question text"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Answer choices (MCQ only)"
+          },
+          "correct_answer": {
+            "type": "string",
+            "description": "Correct answer: MCQ = option text; true_false = 'true'|'false'; fill_blank / short_answer = exact text (case-insensitive trimmed match)"
+          },
+          "accepted_answers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional list of alternative accepted answers for fill_blank / short_answer (case-insensitive)"
+          },
+          "difficulty": {
+            "type": "string",
+            "enum": [
+              "easy",
+              "medium",
+              "hard"
+            ],
+            "description": "Per-question difficulty"
+          },
+          "marks": {
+            "type": "number",
+            "default": 1,
+            "description": "Marks awarded for a correct answer"
+          }
+        },
+        "required": [
+          "type",
+          "prompt",
+          "correct_answer"
+        ]
+      }
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Short summary of this exercise for search and metadata."
+    }
+  },
+  "required": [
+    "teacher_email",
+    "class_id",
+    "subject_id",
+    "title",
+    "due_date"
+  ]
+}

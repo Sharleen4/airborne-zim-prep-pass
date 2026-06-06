@@ -1,0 +1,75 @@
+{
+  "name": "ChildPerformanceMetrics",
+  "type": "object",
+  "properties": {
+    "child_id": {
+      "type": "string",
+      "description": "Reference to ChildProfile.id"
+    },
+    "child_name": {
+      "type": "string",
+      "description": "Cached child name for quick display"
+    },
+    "linked_parent_id": {
+      "type": "string",
+      "description": "Reference to ParentProfile.id"
+    },
+    "last_login_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date the child last logged in"
+    },
+    "quizzes_completed": {
+      "type": "number",
+      "default": 0,
+      "description": "Total number of quizzes completed"
+    },
+    "last_quiz_subject": {
+      "type": "string",
+      "description": "Subject of the most recently completed quiz"
+    },
+    "last_quiz_topic": {
+      "type": "string",
+      "description": "Topic of the most recently completed quiz"
+    },
+    "last_quiz_score": {
+      "type": "number",
+      "description": "Score percentage of the most recent quiz"
+    },
+    "previous_quiz_score": {
+      "type": "number",
+      "description": "Score percentage of the quiz before the most recent one"
+    },
+    "average_score": {
+      "type": "number",
+      "description": "Running average score percentage across all quizzes"
+    },
+    "streak_days": {
+      "type": "number",
+      "default": 0,
+      "description": "Consecutive days the child has been active"
+    },
+    "inactive_days": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of days since last login"
+    },
+    "homework_pending": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of pending homework assignments"
+    },
+    "mock_exam_score": {
+      "type": "number",
+      "description": "Most recent mock exam score percentage"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Short summary of this performance metrics record for search and metadata."
+    }
+  },
+  "required": [
+    "child_id"
+  ]
+}

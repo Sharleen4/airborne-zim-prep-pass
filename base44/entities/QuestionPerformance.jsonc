@@ -1,0 +1,65 @@
+{
+  "name": "QuestionPerformance",
+  "type": "object",
+  "properties": {
+    "student_email": {
+      "type": "string",
+      "description": "Student email"
+    },
+    "question_id": {
+      "type": "string",
+      "description": "Reference to Question"
+    },
+    "topic_id": {
+      "type": "string"
+    },
+    "subject_id": {
+      "type": "string"
+    },
+    "times_seen": {
+      "type": "number",
+      "default": 0
+    },
+    "times_correct": {
+      "type": "number",
+      "default": 0
+    },
+    "times_incorrect": {
+      "type": "number",
+      "default": 0
+    },
+    "last_seen_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "next_review_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Spaced repetition next review date"
+    },
+    "interval_days": {
+      "type": "number",
+      "default": 1,
+      "description": "Current SR interval in days"
+    },
+    "ease_factor": {
+      "type": "number",
+      "default": 2.5,
+      "description": "SM-2 ease factor"
+    },
+    "streak": {
+      "type": "number",
+      "default": 0,
+      "description": "Consecutive correct answers"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Short summary of this performance record for search and metadata."
+    }
+  },
+  "required": [
+    "student_email",
+    "question_id"
+  ]
+}

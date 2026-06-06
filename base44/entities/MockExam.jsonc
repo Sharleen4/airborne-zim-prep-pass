@@ -1,0 +1,53 @@
+{
+  "name": "MockExam",
+  "type": "object",
+  "properties": {
+    "subject_id": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "exam_number": {
+      "type": "number",
+      "description": "Exam number e.g. 1, 2, 3"
+    },
+    "grade": {
+      "type": "string"
+    },
+    "duration_minutes": {
+      "type": "number",
+      "default": 30
+    },
+    "total_marks": {
+      "type": "number"
+    },
+    "instructions": {
+      "type": "string"
+    },
+    "image_url": {
+      "type": "string",
+      "description": "ZIMSEC branding or exam paper thumbnail image URL"
+    },
+    "question_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Short summary of this mock exam for search and metadata."
+    }
+  },
+  "required": [
+    "subject_id",
+    "title",
+    "grade"
+  ]
+}

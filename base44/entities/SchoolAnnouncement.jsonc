@@ -1,0 +1,52 @@
+{
+  "name": "SchoolAnnouncement",
+  "type": "object",
+  "properties": {
+    "school_id": {
+      "type": "string",
+      "description": "Reference to School.id"
+    },
+    "author_email": {
+      "type": "string",
+      "description": "Email of the user who created the announcement"
+    },
+    "author_name": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "body": {
+      "type": "string"
+    },
+    "audience": {
+      "type": "string",
+      "enum": [
+        "all",
+        "teachers",
+        "parents",
+        "students"
+      ],
+      "default": "all",
+      "description": "Who should see this announcement"
+    },
+    "class_id": {
+      "type": "string",
+      "description": "Optional \u2014 limit announcement to a single class"
+    },
+    "is_pinned": {
+      "type": "boolean",
+      "default": false
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Short summary of this announcement for search and metadata."
+    }
+  },
+  "required": [
+    "school_id",
+    "title",
+    "body"
+  ]
+}

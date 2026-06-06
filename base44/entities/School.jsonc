@@ -1,0 +1,145 @@
+{
+  "name": "School",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Official school name"
+    },
+    "address": {
+      "type": "string",
+      "description": "Physical address of the school"
+    },
+    "city": {
+      "type": "string"
+    },
+    "contact_email": {
+      "type": "string",
+      "description": "Main contact email for the school"
+    },
+    "contact_phone": {
+      "type": "string"
+    },
+    "contact_person_name": {
+      "type": "string",
+      "description": "Full name of the primary contact person at the school"
+    },
+    "contact_person_job_title": {
+      "type": "string",
+      "description": "Job title of the primary contact person (e.g. Headmaster, Deputy Head, IT Coordinator)"
+    },
+    "total_students": {
+      "type": "number",
+      "description": "Total number of students currently enrolled at the school"
+    },
+    "logo_url": {
+      "type": "string",
+      "description": "URL to the school's logo image"
+    },
+    "school_admin_email": {
+      "type": "string",
+      "description": "Email of the primary User (role=school_admin) who owns/manages this school"
+    },
+    "co_admin_emails": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Emails of additional users with school_admin permissions for this school"
+    },
+    "co_admin_details": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "full_name": {
+            "type": "string"
+          },
+          "job_title": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          }
+        }
+      },
+      "default": [],
+      "description": "Contact details for each co-admin invited to the school"
+    },
+    "approval_status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "approved",
+        "rejected"
+      ],
+      "default": "pending",
+      "description": "Super admin approval status. New schools start as pending; teachers can only be added once approved."
+    },
+    "approved_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the super admin approved this school"
+    },
+    "approved_by": {
+      "type": "string",
+      "description": "Email of the super admin who approved this school"
+    },
+    "rejection_reason": {
+      "type": "string",
+      "description": "Reason given by super admin when rejecting a school"
+    },
+    "deletion_status": {
+      "type": "string",
+      "enum": [
+        "none",
+        "pending",
+        "scheduled"
+      ],
+      "default": "none",
+      "description": "Current deletion state: none = active, pending = awaiting approvals, scheduled = approved & in 30-day recycle bin"
+    },
+    "deletion_requested_by": {
+      "type": "string",
+      "description": "Email of the admin who initiated the deletion request"
+    },
+    "deletion_requested_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the current deletion request was initiated"
+    },
+    "deletion_approvals": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Emails of admins who have approved the current deletion request (max 3 unique)"
+    },
+    "deletion_scheduled_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date the school will be permanently purged (30 days after final approval)"
+    },
+    "motto": {
+      "type": "string"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Short summary of this school for search and metadata."
+    }
+  },
+  "required": [
+    "name",
+    "school_admin_email"
+  ]
+}

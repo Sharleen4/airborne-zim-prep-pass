@@ -1,0 +1,50 @@
+{
+  "name": "Diagram",
+  "type": "object",
+  "properties": {
+    "topic_id": {
+      "type": "string",
+      "description": "Reference to Topic"
+    },
+    "subject_id": {
+      "type": "string",
+      "description": "Reference to Subject"
+    },
+    "title": {
+      "type": "string",
+      "description": "Diagram title"
+    },
+    "description": {
+      "type": "string",
+      "description": "What the diagram shows"
+    },
+    "diagram_type": {
+      "type": "string",
+      "enum": [
+        "illustration",
+        "flowchart",
+        "image",
+        "chart",
+        "concept map",
+        "process diagram"
+      ],
+      "description": "Type of diagram"
+    },
+    "file_name": {
+      "type": "string",
+      "description": "Image file name or URL"
+    },
+    "keywords": {
+      "type": "string",
+      "description": "Searchable keywords"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": [
+    "topic_id",
+    "title"
+  ]
+}

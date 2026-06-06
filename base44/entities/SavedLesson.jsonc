@@ -1,0 +1,75 @@
+{
+  "name": "SavedLesson",
+  "type": "object",
+  "properties": {
+    "teacher_email": {
+      "type": "string",
+      "description": "Email of the teacher who saved this lesson"
+    },
+    "school_id": {
+      "type": "string",
+      "description": "Optional reference to School.id"
+    },
+    "curriculum_topic_id": {
+      "type": "string",
+      "description": "Reference to the CurriculumTopic this lesson was generated from"
+    },
+    "subject": {
+      "type": "string",
+      "description": "Subject name e.g. Mathematics"
+    },
+    "grade": {
+      "type": "string",
+      "enum": [
+        "Grade 4",
+        "Grade 5",
+        "Grade 6",
+        "Grade 7"
+      ]
+    },
+    "topic": {
+      "type": "string"
+    },
+    "subtopic": {
+      "type": "string"
+    },
+    "curriculum_code": {
+      "type": "string"
+    },
+    "lesson_title": {
+      "type": "string"
+    },
+    "duration": {
+      "type": "string"
+    },
+    "plan": {
+      "type": "object",
+      "description": "Full lesson plan JSON (all sections)",
+      "additionalProperties": true
+    },
+    "section_order": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Order of subject-specific sections used when rendering"
+    },
+    "template_key": {
+      "type": "string"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Short summary for search and metadata."
+    }
+  },
+  "required": [
+    "teacher_email",
+    "lesson_title",
+    "plan"
+  ]
+}

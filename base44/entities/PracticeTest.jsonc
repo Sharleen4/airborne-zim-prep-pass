@@ -1,0 +1,48 @@
+{
+  "name": "PracticeTest",
+  "type": "object",
+  "properties": {
+    "topic_id": {
+      "type": "string",
+      "description": "Reference to Topic"
+    },
+    "subject_id": {
+      "type": "string",
+      "description": "Reference to Subject"
+    },
+    "name": {
+      "type": "string",
+      "description": "e.g. Test 1, Test 2"
+    },
+    "test_number": {
+      "type": "number",
+      "description": "Sequential number for ordering"
+    },
+    "question_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "IDs of the questions in this test"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "curated",
+        "ai_generated"
+      ],
+      "default": "curated",
+      "description": "curated = pulled from question bank, ai_generated = AI-created"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Short summary of this practice test for search and metadata."
+    }
+  },
+  "required": [
+    "topic_id",
+    "name",
+    "question_ids"
+  ]
+}

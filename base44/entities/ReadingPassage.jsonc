@@ -1,0 +1,52 @@
+{
+  "name": "ReadingPassage",
+  "type": "object",
+  "properties": {
+    "subject_id": {
+      "type": "string"
+    },
+    "topic_id": {
+      "type": "string"
+    },
+    "grade": {
+      "type": "string",
+      "enum": [
+        "Grade 4",
+        "Grade 5",
+        "Grade 6",
+        "Grade 7"
+      ]
+    },
+    "title": {
+      "type": "string"
+    },
+    "passage": {
+      "type": "string",
+      "description": "Short reading passage"
+    },
+    "word_count": {
+      "type": "number"
+    },
+    "question_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "References to Question entity (MCQ / true_false / fill_blank)"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Short summary of this reading passage for search and metadata."
+    }
+  },
+  "required": [
+    "grade",
+    "title",
+    "passage"
+  ]
+}

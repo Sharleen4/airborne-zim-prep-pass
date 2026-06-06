@@ -1,0 +1,57 @@
+{
+  "name": "Bookmark",
+  "type": "object",
+  "properties": {
+    "student_email": {
+      "type": "string",
+      "description": "Student email"
+    },
+    "item_type": {
+      "type": "string",
+      "enum": [
+        "question",
+        "note"
+      ],
+      "description": "Type of bookmarked item"
+    },
+    "question_id": {
+      "type": "string",
+      "description": "Reference to Question (if item_type is question)"
+    },
+    "topic_id": {
+      "type": "string",
+      "description": "Reference to Topic"
+    },
+    "subject_id": {
+      "type": "string",
+      "description": "Reference to Subject"
+    },
+    "question_text": {
+      "type": "string",
+      "description": "Cached question text for quick display"
+    },
+    "note_preview": {
+      "type": "string",
+      "description": "Preview text from note"
+    },
+    "reason": {
+      "type": "string",
+      "enum": [
+        "struggling",
+        "review_later",
+        "important"
+      ],
+      "description": "Why user bookmarked this"
+    },
+    "notes": {
+      "type": "string",
+      "description": "User's personal notes about this bookmark"
+    }
+  },
+  "required": [
+    "student_email",
+    "item_type",
+    "topic_id",
+    "subject_id"
+  ]
+}

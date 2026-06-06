@@ -1,0 +1,61 @@
+{
+  "name": "CompositionPrompt",
+  "type": "object",
+  "properties": {
+    "subject_id": {
+      "type": "string"
+    },
+    "topic_id": {
+      "type": "string"
+    },
+    "grade": {
+      "type": "string",
+      "enum": [
+        "Grade 4",
+        "Grade 5",
+        "Grade 6",
+        "Grade 7"
+      ]
+    },
+    "title": {
+      "type": "string",
+      "description": "Composition topic e.g. 'My Best Holiday'"
+    },
+    "intro_starter": {
+      "type": "string",
+      "description": "Suggested opening sentence"
+    },
+    "body_ideas": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Bullet ideas for the body paragraphs"
+    },
+    "ending_starter": {
+      "type": "string",
+      "description": "Suggested closing sentence"
+    },
+    "min_words": {
+      "type": "number",
+      "default": 80
+    },
+    "max_words": {
+      "type": "number",
+      "default": 200
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Short summary of this composition prompt for search and metadata."
+    }
+  },
+  "required": [
+    "grade",
+    "title"
+  ]
+}

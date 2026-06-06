@@ -1,0 +1,53 @@
+{
+  "name": "StudentProfile",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Email of the student (User with role=student) \u2014 optional if student has no login yet"
+    },
+    "child_profile_id": {
+      "type": "string",
+      "description": "Reference to ChildProfile.id \u2014 link to existing parent-managed child profile if applicable"
+    },
+    "school_id": {
+      "type": "string",
+      "description": "Reference to School.id"
+    },
+    "class_id": {
+      "type": "string",
+      "description": "Reference to SchoolClass.id"
+    },
+    "full_name": {
+      "type": "string",
+      "description": "Student's full name"
+    },
+    "grade": {
+      "type": "string",
+      "enum": [
+        "Grade 4",
+        "Grade 5",
+        "Grade 6",
+        "Grade 7"
+      ]
+    },
+    "parent_email": {
+      "type": "string",
+      "description": "Email of the parent guardian (User with role=parent) \u2014 for linking parent dashboards"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Short summary of this student profile for search and metadata."
+    }
+  },
+  "required": [
+    "school_id",
+    "full_name",
+    "grade"
+  ]
+}

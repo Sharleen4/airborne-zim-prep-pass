@@ -1,0 +1,117 @@
+{
+  "name": "Note",
+  "type": "object",
+  "properties": {
+    "topic_id": {
+      "type": "string",
+      "description": "Reference to Topic"
+    },
+    "subject_id": {
+      "type": "string"
+    },
+    "image_url": {
+      "type": "string",
+      "description": "Kid-friendly header illustration URL for this topic"
+    },
+    "overview": {
+      "type": "string",
+      "description": "Topic overview"
+    },
+    "key_definitions": {
+      "type": "string",
+      "description": "Key definitions in JSON or markdown"
+    },
+    "key_concepts": {
+      "type": "string",
+      "description": "Key concepts explained"
+    },
+    "concept_examples": {
+      "type": "array",
+      "description": "Examples for each concept, easy to hard",
+      "items": {
+        "type": "object",
+        "properties": {
+          "concept": {
+            "type": "string",
+            "description": "Name of the concept"
+          },
+          "examples": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "difficulty": {
+                  "type": "string",
+                  "enum": [
+                    "Easy",
+                    "Medium",
+                    "Hard"
+                  ]
+                },
+                "problem": {
+                  "type": "string"
+                },
+                "solution": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "zimbabwe_examples": {
+      "type": "string",
+      "description": "Real Zimbabwe examples"
+    },
+    "important_facts": {
+      "type": "string",
+      "description": "Facts to remember"
+    },
+    "common_mistakes": {
+      "type": "string",
+      "description": "Common exam mistakes"
+    },
+    "summary": {
+      "type": "string",
+      "description": "Summary bullet points"
+    },
+    "exam_tips": {
+      "type": "string",
+      "description": "Exam tips"
+    },
+    "is_ai_generated": {
+      "type": "boolean",
+      "default": false
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether the note is published and visible to students"
+    },
+    "review_status": {
+      "type": "string",
+      "enum": [
+        "pending_review",
+        "approved",
+        "rejected"
+      ],
+      "description": "Approval status for PDF-uploaded notes"
+    },
+    "suggested_grade": {
+      "type": "string",
+      "description": "AI-suggested grade from PDF extraction"
+    },
+    "suggested_subject": {
+      "type": "string",
+      "description": "AI-suggested subject name from PDF extraction"
+    },
+    "suggested_topic": {
+      "type": "string",
+      "description": "AI-suggested topic name from PDF extraction"
+    }
+  },
+  "required": [
+    "topic_id"
+  ]
+}

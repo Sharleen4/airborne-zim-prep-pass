@@ -1,0 +1,72 @@
+{
+  "name": "HomeworkAssignment",
+  "type": "object",
+  "properties": {
+    "parent_email": {
+      "type": "string",
+      "description": "Email of the parent who assigned the homework"
+    },
+    "child_profile_id": {
+      "type": "string",
+      "description": "Reference to ChildProfile"
+    },
+    "child_name": {
+      "type": "string",
+      "description": "Cached child name for quick display"
+    },
+    "subject_id": {
+      "type": "string",
+      "description": "Reference to Subject"
+    },
+    "topic_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of topic IDs included in this homework"
+    },
+    "title": {
+      "type": "string",
+      "description": "Homework title"
+    },
+    "description": {
+      "type": "string",
+      "description": "Instructions or notes from the parent"
+    },
+    "due_date": {
+      "type": "string",
+      "format": "date",
+      "description": "When the homework is due"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "assigned",
+        "in_progress",
+        "completed",
+        "reviewed"
+      ],
+      "default": "assigned",
+      "description": "Current status of the homework"
+    },
+    "student_email": {
+      "type": "string",
+      "description": "Email of the student this homework is assigned to"
+    },
+    "completed_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "score": {
+      "type": "number",
+      "description": "Score achieved if homework involved a practice session"
+    }
+  },
+  "required": [
+    "parent_email",
+    "child_profile_id",
+    "subject_id",
+    "title",
+    "due_date"
+  ]
+}

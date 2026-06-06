@@ -1,0 +1,50 @@
+{
+  "name": "User",
+  "type": "object",
+  "properties": {
+    "role": {
+      "type": "string",
+      "enum": [
+        "admin",
+        "user",
+        "teacher",
+        "school_admin",
+        "parent",
+        "student"
+      ],
+      "default": "user",
+      "description": "User role in the app. 'user' is legacy/parent default; 'parent', 'student', 'teacher', 'school_admin' are explicit school roles."
+    },
+    "referral_code": {
+      "type": "string",
+      "description": "Unique referral code for teacher users"
+    },
+    "parent_name": {
+      "type": "string",
+      "description": "Parent/guardian name"
+    },
+    "contact_number": {
+      "type": "string",
+      "description": "Contact phone number"
+    },
+    "contact_updates_dismissed": {
+      "type": "boolean",
+      "default": false
+    },
+    "last_login_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp of the user's most recent login (stamped daily by onUserLogin)"
+    },
+    "school_id": {
+      "type": "string",
+      "description": "Reference to School.id \u2014 set for school_admin, teacher, and student roles"
+    },
+    "onboarding_completed": {
+      "type": "boolean",
+      "default": false,
+      "description": "True once the user has completed the first-run onboarding wizard."
+    }
+  },
+  "required": []
+}
