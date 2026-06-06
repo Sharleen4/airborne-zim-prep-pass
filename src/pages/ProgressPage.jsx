@@ -6,7 +6,6 @@ import { useTabState } from "@/hooks/useTabState";
 import { TrendingUp, Target, BookOpen, Award, Sparkles, CheckCircle2, RefreshCw, WifiOff, ChevronDown, ChevronRight, Lock, Crown } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
 import { motion } from "framer-motion";
-import { BottomNav } from "./Home";
 import SyncStatusBar from "@/components/SyncStatusBar";
 import { getCachedResults, getCachedTopicProgress, getCachedAllTopics } from "@/lib/offlineCache";
 import { useOffline } from "@/lib/useOffline";
@@ -414,7 +413,6 @@ Analyse and provide:
       </div>
       </div>
 
-      <BottomNav active="progress" />
     </div>
   );
 }

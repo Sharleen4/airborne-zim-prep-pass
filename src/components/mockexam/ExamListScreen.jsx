@@ -2,7 +2,6 @@ import { Download, Sparkles, ChevronRight, FileText, Share2 } from "lucide-react
 import BottomSheetSelect from "@/components/BottomSheetSelect";
 import ShareModal from "@/components/ShareModal";
 import SyncStatusBar from "@/components/SyncStatusBar";
-import { BottomNav } from "@/pages/Home";
 import { useRef } from "react";
 import { useTabState } from "@/hooks/useTabState";
 
@@ -109,7 +108,6 @@ export default function ExamListScreen({
           )}
         </div>
       </div>
-      <BottomNav active="exam" />
     </div>
   );
 }

@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { offlineDB } from "@/lib/offlineDB";
 import { ArrowLeft, ArrowRight, RotateCcw, BookOpen, HelpCircle, WifiOff, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { BottomNav } from "@/pages/Home";
 
 // ─── Single flip card ─────────────────────────────────────────────────────
 function FlipCard({ front, back, hint }) {
@@ -339,7 +338,6 @@ export default function FlashcardsPage() {
         )}
       </div>
 
-      <BottomNav active="flashcards" />
     </div>
   );
 }

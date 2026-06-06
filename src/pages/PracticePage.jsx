@@ -539,7 +539,7 @@ Provide: why_wrong_or_right, simple_explanation, memory_tip, encouragement`,
                       <p className="font-bold text-foreground text-sm">{test.name}</p>
                       <p className="text-xs text-muted-foreground">{test.question_ids?.length || 10} questions</p>
                     </div>
-                    <span className="text-[10px] font-semibold text-orange-500 bg-orange-50 border border-orange-200 px-2 py-0.5 rounded-full">
+                    <span className="text-[10px] font-semibold text-orange-600 dark:text-orange-300 bg-orange-500/10 border border-orange-500/25 px-2 py-0.5 rounded-full">
                       Start →
                     </span>
                   </motion.button>
@@ -631,7 +631,13 @@ Provide: why_wrong_or_right, simple_explanation, memory_tip, encouragement`,
             )}
             <div className="bg-card rounded-2xl p-5 shadow-sm border border-border">
               <div className="flex items-center gap-2 mb-3">
-                <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${q.difficulty === "Easy" ? "bg-green-100 text-green-700" : q.difficulty === "Advanced" ? "bg-red-100 text-red-700" : "bg-blue-100 text-blue-700"}`}>
+                <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+                  q.difficulty === "Easy"
+                    ? "bg-green-500/10 text-green-700 dark:text-green-300"
+                    : q.difficulty === "Advanced"
+                      ? "bg-red-500/10 text-red-700 dark:text-red-300"
+                      : "bg-blue-500/10 text-blue-700 dark:text-blue-300"
+                }`}>
                   {q.difficulty || "Standard"}
                 </span>
                 <span className="text-xs text-muted-foreground">Question {current + 1}</span>

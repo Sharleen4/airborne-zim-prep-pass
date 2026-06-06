@@ -9,7 +9,6 @@ import HomeworkCard from "@/components/homework/HomeworkCard";
 import SubmissionModal from "@/components/school/SubmissionModal";
 import ExerciseRunner from "@/components/school/ExerciseRunner";
 import { exerciseTypeMeta } from "@/lib/exerciseHelpers";
-import { BottomNav } from "@/pages/Home";
 
 // Unified homework page — shows BOTH parent-assigned tasks (HomeworkAssignment)
 // and school-assigned exercises (SchoolHomework) in a single view with filter tabs.
@@ -259,7 +258,6 @@ export default function HomeworkPage() {
         )
       )}
 
-      <BottomNav active="homework" />
     </div>
   );
 }

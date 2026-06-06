@@ -519,8 +519,6 @@ export default function Home() {
       </div>
 
       </PullToRefresh>
-      <BottomNav active="home" />
-
       {/* Floating WhatsApp button */}
       <a
         href="https://wa.me/263786987358?text=Hi%20Zama%20Ai%20Primary%2C%20I%20need%20help%20with..."

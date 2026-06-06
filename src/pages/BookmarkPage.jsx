@@ -7,7 +7,6 @@ import { useOffline } from "@/lib/useOffline";
 import { offlineDB } from "@/lib/offlineDB";
 import { Bookmark, Trash2, BookOpen, HelpCircle, WifiOff } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { BottomNav } from "./Home";
 import SyncStatusBar from "@/components/SyncStatusBar";
 
 export default function BookmarkPage() {
@@ -185,7 +184,6 @@ export default function BookmarkPage() {
         </div>
       </div>
 
-      <BottomNav active="bookmark" />
     </div>
   );
 }

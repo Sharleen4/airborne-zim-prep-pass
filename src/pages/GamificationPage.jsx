@@ -5,7 +5,6 @@ import { ArrowLeft, Zap, BookOpen, FileText } from "lucide-react";
 import { motion } from "framer-motion";
 import { loadStats, getLevelInfo, getProgressPercent, addXp } from "@/lib/gamification";
 import GamificationDashboard from "@/components/gamification/GamificationDashboard";
-import { BottomNav } from "./Home";
 import SyncStatusBar from "@/components/SyncStatusBar";
 
 export default function GamificationPage() {
@@ -105,7 +104,6 @@ export default function GamificationPage() {
         <GamificationDashboard stats={stats} />
       </div>
 
-      <BottomNav />
     </div>
   );
 }

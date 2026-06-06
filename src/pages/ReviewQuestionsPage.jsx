@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { CheckCircle, XCircle, Pencil, ChevronDown, ChevronUp, Filter, Search, X, Save } from "lucide-react";
-import { BottomNav } from "./Home";
 import { useAuth } from "@/lib/AuthContext";
 
 const DIFF_COLORS = {
@@ -371,7 +370,6 @@ export default function ReviewQuestionsPage() {
         )}
       </div>
 
-      <BottomNav active="review" />
     </div>
   );
 }

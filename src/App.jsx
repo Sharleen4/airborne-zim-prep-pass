@@ -15,6 +15,8 @@ import { useActiveChild } from '@/lib/ActiveChildContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import UpdatePrompt from '@/components/UpdatePrompt';
 import LevelUpModal from '@/components/gamification/LevelUpModal';
+import AppBottomNav from '@/components/AppBottomNav';
+import ParentDashboardGate from '@/components/ParentDashboardGate';
 import Home from './pages/Home';
 import RoleHomeRedirect from './components/RoleHomeRedirect';
 import LandingPage from './pages/LandingPage';
@@ -135,7 +137,7 @@ function AnimatedRoutes() {
         <Route path="/admin" element={<PageTransition><AdminPage /></PageTransition>} />
         <Route path="/teacher-dashboard" element={<PageTransition><TeacherDashboardPage /></PageTransition>} />
         <Route path="/help" element={<PageTransition><HelpPage /></PageTransition>} />
-        <Route path="/parent" element={<PageTransition><ParentDashboardPage /></PageTransition>} />
+        <Route path="/parent" element={<PageTransition><ParentDashboardGate><ParentDashboardPage /></ParentDashboardGate></PageTransition>} />
         <Route path="/homework" element={<PageTransition><HomeworkPage /></PageTransition>} />
         <Route path="/review-questions" element={<PageTransition><ReviewQuestionsPage /></PageTransition>} />
         <Route path="/profile" element={<PageTransition><ProfilePage /></PageTransition>} />
@@ -308,6 +310,7 @@ const AuthenticatedApp = () => {
     <>
       <AnimatedRoutes />
       {shouldShowOnboarding && <OnboardingWizard />}
+      <AppBottomNav />
       <ViewAsSwitcher />
       <Suspense fallback={null}><InstallBanner /></Suspense>
     </>

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { RotateCcw, BookOpen } from "lucide-react";
-import { BottomNav } from "@/pages/Home";
 import ExamReviewScreen from "./ExamReviewScreen";
 
 export default function ExamResultScreen({ results, examQuestions, onTryAnother }) {
@@ -51,7 +50,6 @@ export default function ExamResultScreen({ results, examQuestions, onTryAnother 
           </Link>
         </div>
       </div>
-      <BottomNav active="exam" />
     </div>
   );
 }

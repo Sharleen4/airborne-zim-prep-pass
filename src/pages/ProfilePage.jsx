@@ -4,7 +4,6 @@ import { useAuth } from "@/lib/AuthContext";
 import { useTabState } from "@/hooks/useTabState";
 import { base44 } from "@/api/base44Client";
 import { User, LogOut, Mail, Shield, Trash2, AlertTriangle, Settings, HelpCircle, Gift, Phone, Save, Pencil } from "lucide-react";
-import { BottomNav } from "./Home";
 import ThemeToggle from "@/components/ThemeToggle";
 import ShareModal from "@/components/ShareModal";
 import SubscriptionStatusCard from "@/components/SubscriptionStatusCard";
@@ -284,7 +283,6 @@ export default function ProfilePage() {
       </div>
 
       <ShareModal isOpen={showShareModal} onClose={() => setShowShareModal(false)} appUrl={window.location.origin} />
-      <BottomNav active="profile" />
     </div>
   );
 }
