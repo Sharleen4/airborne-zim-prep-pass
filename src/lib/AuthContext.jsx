@@ -3,6 +3,7 @@ import { base44 } from '@/api/base44Client';
 import { appParams } from '@/lib/app-params';
 import { createAxiosClient } from '@base44/sdk/dist/utils/axios-client';
 import { getViewAsRole, subscribeViewAs } from '@/lib/viewAs';
+import { ensureOfflineSeedData } from '@/lib/offlineSeed';
 
 const AuthContext = createContext();
 
@@ -93,6 +94,7 @@ export const AuthProvider = ({ children }) => {
     setIsLoadingPublicSettings(true);
 
     if (isLocalOfflinePreview() && !appParams.token) {
+      await ensureOfflineSeedData();
       const localUser = loadUserFromCache() || getLocalOfflineUser();
       setUser(localUser);
       saveUserToCache(localUser);
