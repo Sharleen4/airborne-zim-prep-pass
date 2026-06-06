@@ -3,6 +3,7 @@ import { appParams } from '@/lib/app-params';
 import { withOfflineEntityFallback } from '@/lib/offlineEntityAdapter';
 
 const { appId, token, functionsVersion, appBaseUrl } = appParams;
+const apiKey = import.meta.env.VITE_BASE44_API_KEY;
 
 //Create a client with authentication required
 const base44Client = createClient({
@@ -11,7 +12,8 @@ const base44Client = createClient({
   functionsVersion,
   serverUrl: '',
   requiresAuth: false,
-  appBaseUrl
+  appBaseUrl,
+  ...(apiKey ? { headers: { api_key: apiKey } } : {})
 });
 
 export const base44 = withOfflineEntityFallback(base44Client);
