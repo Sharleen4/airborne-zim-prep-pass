@@ -3,6 +3,44 @@ import ReactDOM from 'react-dom/client'
 import App from '@/App.jsx'
 import '@/index.css'
 
+class AppErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { error };
+  }
+
+  componentDidCatch(error, info) {
+    console.error('[AppErrorBoundary]', error, info);
+  }
+
+  render() {
+    if (this.state.error) {
+      return (
+        <div className="min-h-screen bg-background text-foreground flex items-center justify-center px-6">
+          <div className="max-w-sm w-full bg-card border border-border rounded-2xl p-5 text-center shadow-sm">
+            <h1 className="text-lg font-bold mb-2">Something went wrong</h1>
+            <p className="text-sm text-muted-foreground mb-4">
+              Refresh the app to continue. If you are testing offline, rebuild and reopen the preview.
+            </p>
+            <button
+              className="w-full bg-primary text-white font-semibold py-3 rounded-xl"
+              onClick={() => window.location.reload()}
+            >
+              Refresh
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
 // Register service worker for offline support — PRODUCTION ONLY.
 // In dev, a SW can cache stale Vite chunks and break React (e.g. "Cannot read properties of null (reading 'useState')").
 if ('serviceWorker' in navigator) {
@@ -40,5 +78,7 @@ document.addEventListener('touchmove', (e) => {
 }, { passive: false });
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <App />
+  <AppErrorBoundary>
+    <App />
+  </AppErrorBoundary>
 )
