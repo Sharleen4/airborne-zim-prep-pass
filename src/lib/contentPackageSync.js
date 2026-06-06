@@ -1,7 +1,15 @@
+import { createClient } from "@base44/sdk";
 import { base44 } from "@/api/base44Client";
 import { offlineDB } from "@/lib/offlineDB";
 
 const QUESTION_PAGE_SIZE = 500;
+
+const contentClient = createClient({
+  appId: import.meta.env.VITE_BASE44_APP_ID,
+  ...(import.meta.env.VITE_BASE44_API_KEY ? { headers: { api_key: import.meta.env.VITE_BASE44_API_KEY } } : {}),
+});
+
+const contentBase44 = import.meta.env.VITE_BASE44_API_KEY ? contentClient : base44;
 
 function packageIdFor(subject) {
   const grade = subject.grade || "Ungraded";
@@ -21,7 +29,7 @@ function latestDate(items) {
 async function fetchAllQuestionsForSubject(subjectId) {
   const all = [];
   for (let page = 0; page < 50; page += 1) {
-    const batch = await base44.entities.Question.filter(
+    const batch = await contentBase44.entities.Question.filter(
       { subject_id: subjectId, is_active: true },
       "-updated_date",
       QUESTION_PAGE_SIZE,
@@ -62,7 +70,7 @@ export async function loadContentPackageSummary() {
 }
 
 export async function fetchRemoteSubjects() {
-  const remote = await base44.entities.Subject.filter({ is_active: true }, "grade", 500);
+  const remote = await contentBase44.entities.Subject.filter({ is_active: true }, "grade", 500);
   const subjects = Array.isArray(remote) ? remote : [];
   if (subjects.length) {
     await offlineDB.putMany(offlineDB.STORES.subjects, subjects);
@@ -76,11 +84,11 @@ export async function syncSubjectContentPackage(subject) {
   if (!navigator.onLine) throw new Error("Connect to the internet to sync content");
 
   const [topicsRaw, notesRaw, questionsRaw, testsRaw, examsRaw] = await Promise.all([
-    base44.entities.Topic.filter({ subject_id: subject.id, is_active: true }, "order", 2000).catch(() => []),
-    base44.entities.Note.filter({ subject_id: subject.id, is_active: true }, "-updated_date", 5000).catch(() => []),
+    contentBase44.entities.Topic.filter({ subject_id: subject.id, is_active: true }, "order", 2000).catch(() => []),
+    contentBase44.entities.Note.filter({ subject_id: subject.id, is_active: true }, "-updated_date", 5000).catch(() => []),
     fetchAllQuestionsForSubject(subject.id),
-    base44.entities.PracticeTest.filter({ subject_id: subject.id }, "test_number", 2000).catch(() => []),
-    base44.entities.MockExam.filter({ subject_id: subject.id, is_active: true }, "exam_number", 200).catch(() => []),
+    contentBase44.entities.PracticeTest.filter({ subject_id: subject.id }, "test_number", 2000).catch(() => []),
+    contentBase44.entities.MockExam.filter({ subject_id: subject.id, is_active: true }, "exam_number", 200).catch(() => []),
   ]);
 
   const topics = Array.isArray(topicsRaw) ? topicsRaw : [];

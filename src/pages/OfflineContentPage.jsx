@@ -46,12 +46,12 @@ export default function OfflineContentPage() {
     : packages.filter((pkg) => pkg.subject.grade === grade);
 
   const refreshFromBase44 = async () => {
-    setMessage("");
+    setMessage("Checking available content...");
     setRefreshing(true);
     try {
-      await fetchRemoteSubjects();
+      const subjects = await fetchRemoteSubjects();
       await load();
-      setMessage("Subjects refreshed.");
+      setMessage(`Found ${subjects.length} subject${subjects.length === 1 ? "" : "s"} available for offline sync.`);
     } catch (error) {
       setMessage(error?.message || "Could not refresh content.");
     } finally {
@@ -65,7 +65,7 @@ export default function OfflineContentPage() {
     try {
       const result = await syncSubjectContentPackage(pkg.subject);
       await load();
-      setMessage(`${pkg.subject.grade || ""} ${pkg.subject.name}: synced ${result.counts.questions} questions.`);
+      setMessage(`${pkg.subject.grade || ""} ${pkg.subject.name}: synced ${result.counts.topics} topics, ${result.counts.notes} notes, and ${result.counts.questions} questions.`);
     } catch (error) {
       setMessage(error?.message || "Content sync failed.");
     } finally {
