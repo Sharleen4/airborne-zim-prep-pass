@@ -137,6 +137,7 @@ async function getById(storeName, id) {
 }
 
 async function putMany(storeName, items) {
+  if (!Array.isArray(items)) items = items ? [items] : [];
   if (!items || items.length === 0) return;
   const db = await openDB();
   if (!db) {

@@ -63,6 +63,12 @@ async function cacheEntityRecords(entityName, records) {
   ]);
 }
 
+async function fallbackCollection(entityName, filter, sort, limit, offset) {
+  const cached = await readCachedEntity(entityName);
+  const filtered = filter ? cached.filter((item) => matchesFilter(item, filter)) : cached;
+  return sortItems(filtered, sort).slice(offset, limit ? offset + limit : undefined);
+}
+
 async function updateCachedRecord(entityName, item) {
   if (!item?.id) return;
   const storeName = KNOWN_ENTITY_STORES[entityName];
@@ -87,38 +93,36 @@ function wrapEntity(entityName, entity) {
       if (!isOffline()) {
         try {
           const data = await entity.list(sort, limit, offset);
+          if (!Array.isArray(data)) return fallbackCollection(entityName, null, sort, limit, offset);
           await cacheEntityRecords(entityName, data);
           return data;
         } catch (error) {
-          const cached = await readCachedEntity(entityName);
-          if (cached.length) return sortItems(cached, sort).slice(offset, limit ? offset + limit : undefined);
+          const cached = await fallbackCollection(entityName, null, sort, limit, offset);
+          if (cached.length) return cached;
           throw error;
         }
       }
 
-      const cached = await readCachedEntity(entityName);
-      return sortItems(cached, sort).slice(offset, limit ? offset + limit : undefined);
+      return fallbackCollection(entityName, null, sort, limit, offset);
     },
 
     async filter(filter = {}, sort, limit, offset = 0) {
       if (!isOffline()) {
         try {
           const data = await entity.filter(filter, sort, limit, offset);
+          if (!Array.isArray(data)) return fallbackCollection(entityName, filter, sort, limit, offset);
           await cacheEntityRecords(entityName, data);
           return data;
         } catch (error) {
-          const cached = await readCachedEntity(entityName);
+          const cached = await fallbackCollection(entityName, filter, sort, limit, offset);
           if (cached.length) {
-            return sortItems(cached.filter((item) => matchesFilter(item, filter)), sort)
-              .slice(offset, limit ? offset + limit : undefined);
+            return cached;
           }
           throw error;
         }
       }
 
-      const cached = await readCachedEntity(entityName);
-      return sortItems(cached.filter((item) => matchesFilter(item, filter)), sort)
-        .slice(offset, limit ? offset + limit : undefined);
+      return fallbackCollection(entityName, filter, sort, limit, offset);
     },
 
     async get(id) {
