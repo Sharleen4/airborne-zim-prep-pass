@@ -142,14 +142,29 @@ function wrapEntity(entityName, entity) {
     },
 
     async create(data) {
+      const id = data.id || `offline_${entityName}_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+      const localDraft = {
+        ...data,
+        id,
+        created_date: data.created_date || new Date().toISOString(),
+      };
+      await updateCachedRecord(entityName, localDraft);
+
       if (!isOffline()) {
-        const created = await entity.create(data);
-        await cacheEntityRecords(entityName, created || data);
-        return created;
+        try {
+          const created = await entity.create(data);
+          await cacheEntityRecords(entityName, created || localDraft);
+          return created || localDraft;
+        } catch (error) {
+          const { queueEntity } = await import("./syncManager");
+          const pending = { ...localDraft, _pending: true };
+          await queueEntity(entityName, "create", pending);
+          await updateCachedRecord(entityName, pending);
+          return pending;
+        }
       }
 
-      const id = data.id || `offline_${entityName}_${Date.now()}_${Math.random().toString(36).slice(2)}`;
-      const queued = { ...data, id, _pending: true, created_date: data.created_date || new Date().toISOString() };
+      const queued = { ...localDraft, _pending: true };
       const { queueEntity } = await import("./syncManager");
       await queueEntity(entityName, "create", queued);
       await updateCachedRecord(entityName, queued);

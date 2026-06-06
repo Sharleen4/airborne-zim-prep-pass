@@ -224,7 +224,9 @@ function MockExamPageInner() {
     if (isOffline) {
       await queueResult(resultData);
     } else {
-      await base44.entities.StudentResult.create(resultData);
+      const savedResult = await base44.entities.StudentResult.create(resultData);
+      const { offlineDB } = await import("@/lib/offlineDB");
+      await offlineDB.putOne(offlineDB.STORES.studentResults, savedResult || resultData);
     }
     setResults({ score, total: examQuestions.length, percentage, answerDetails });
     if (selectedExam?.id) setCompletedExamIds(s => new Set([...s, selectedExam.id]));

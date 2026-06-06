@@ -444,7 +444,8 @@ Provide: why_wrong_or_right, simple_explanation, memory_tip, encouragement`,
     if (isOffline) {
       await queueResult(resultData);
     } else {
-      await base44.entities.StudentResult.create(resultData);
+      const savedResult = await base44.entities.StudentResult.create(resultData);
+      await offlineDB.putOne(offlineDB.STORES.studentResults, savedResult || resultData);
     }
     if (percentage < 50) {
       const progressData = {
