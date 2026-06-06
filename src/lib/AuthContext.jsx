@@ -6,6 +6,24 @@ import { getViewAsRole, subscribeViewAs } from '@/lib/viewAs';
 
 const AuthContext = createContext();
 
+function isLocalOfflinePreview() {
+  if (typeof window === "undefined") return false;
+  return ["localhost", "127.0.0.1", "::1"].includes(window.location.hostname);
+}
+
+function getLocalOfflineUser() {
+  return {
+    id: "local-offline-user",
+    email: "offline@zamaai.local",
+    full_name: "Offline Learner",
+    role: "parent",
+    onboarding_completed: true,
+    subscription_status: "active",
+    created_date: new Date().toISOString(),
+    __localOfflinePreview: true,
+  };
+}
+
 // Super-admin-only role override: when a real admin picks a "View As" role,
 // every page sees the overridden role via useAuth(). The real role is preserved
 // on user.__realRole so the View-As switcher itself stays visible.
@@ -73,6 +91,17 @@ export const AuthProvider = ({ children }) => {
     // Always set loading states
     setIsLoadingAuth(true);
     setIsLoadingPublicSettings(true);
+
+    if (isLocalOfflinePreview() && !appParams.token) {
+      const localUser = loadUserFromCache() || getLocalOfflineUser();
+      setUser(localUser);
+      saveUserToCache(localUser);
+      setIsAuthenticated(true);
+      setAuthError(null);
+      setIsLoadingPublicSettings(false);
+      setIsLoadingAuth(false);
+      return;
+    }
 
     // If we have a cached user + token, allow immediate access without any API call
     const cached = loadUserFromCache();
@@ -265,6 +294,10 @@ export const AuthProvider = ({ children }) => {
       // to the private URL they were on (otherwise pressing Back restores it from
       // the browser's bfcache and shows app content while logged out).
       const landingUrl = window.location.origin + '/';
+      if (isLocalOfflinePreview()) {
+        window.location.replace(landingUrl);
+        return;
+      }
       base44.auth.logout(landingUrl);
     } else {
       base44.auth.logout();
@@ -272,6 +305,10 @@ export const AuthProvider = ({ children }) => {
   };
 
   const navigateToLogin = () => {
+    if (isLocalOfflinePreview()) {
+      window.location.replace('/home');
+      return;
+    }
     base44.auth.redirectToLogin(window.location.href);
   };
 

@@ -114,6 +114,7 @@ function AnimatedRoutes() {
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<PageTransition><LandingPage /></PageTransition>} />
+        <Route path="/login" element={<Navigate to="/home" replace />} />
         <Route path="/pricing" element={<PageTransition><PricingPage /></PageTransition>} />
         <Route path="/about" element={<PageTransition><AboutPage /></PageTransition>} />
         <Route path="/install" element={<PageTransition><InstallAppPage /></PageTransition>} />
@@ -209,7 +210,7 @@ const AuthenticatedApp = () => {
   }, [isAuthenticated, isLoadingAuth]);
 
   const currentPath = window.location.pathname;
-  const publicRoutes = ["/", "/pricing", "/about", "/install", "/terms", "/privacy", "/privacy-policy", "/class-join"];
+  const publicRoutes = ["/", "/login", "/pricing", "/about", "/install", "/terms", "/privacy", "/privacy-policy", "/class-join"];
   const isPublicRoute = publicRoutes.includes(currentPath);
 
   // Always show a loader until auth state is resolved

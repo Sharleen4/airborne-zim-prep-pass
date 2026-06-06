@@ -6,6 +6,10 @@ export function useSubscription(user) {
 
   useEffect(() => {
     if (!user) return;
+    if (user.__localOfflinePreview) {
+      setSubStatus({ active: true, isLocalOfflinePreview: true });
+      return;
+    }
     // Admins bypass subscription check
     if (user.role === "admin") {
       setSubStatus({ active: true, isAdmin: true });
