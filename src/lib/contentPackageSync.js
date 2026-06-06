@@ -42,6 +42,34 @@ async function fetchAllQuestionsForSubject(subjectId) {
   return all;
 }
 
+async function fetchNotesForSubjectTopics(subjectId, topics) {
+  const topicIds = topics.map((topic) => topic.id).filter(Boolean);
+  const byId = new Map();
+
+  const subjectNotes = await contentBase44.entities.Note.filter(
+    { subject_id: subjectId },
+    "-updated_date",
+    5000
+  ).catch(() => []);
+  (Array.isArray(subjectNotes) ? subjectNotes : []).forEach((note) => {
+    if (note?.id) byId.set(note.id, note);
+  });
+
+  for (let i = 0; i < topicIds.length; i += 8) {
+    const batchIds = topicIds.slice(i, i + 8);
+    const batches = await Promise.all(
+      batchIds.map((topicId) =>
+        contentBase44.entities.Note.filter({ topic_id: topicId }, "-updated_date", 100).catch(() => [])
+      )
+    );
+    batches.flat().forEach((note) => {
+      if (note?.id) byId.set(note.id, note);
+    });
+  }
+
+  return [...byId.values()].filter((note) => note.is_active !== false);
+}
+
 export async function loadContentPackageSummary() {
   const [subjects, packages, topics, notes, questions] = await Promise.all([
     offlineDB.getAll(offlineDB.STORES.subjects).catch(() => []),
@@ -83,9 +111,8 @@ export async function syncSubjectContentPackage(subject) {
   if (!subject?.id) throw new Error("Subject is required");
   if (!navigator.onLine) throw new Error("Connect to the internet to sync content");
 
-  const [topicsRaw, notesRaw, questionsRaw, testsRaw, examsRaw] = await Promise.all([
+  const [topicsRaw, questionsRaw, testsRaw, examsRaw] = await Promise.all([
     contentBase44.entities.Topic.filter({ subject_id: subject.id, is_active: true }, "order", 2000).catch(() => []),
-    contentBase44.entities.Note.filter({ subject_id: subject.id, is_active: true }, "-updated_date", 5000).catch(() => []),
     fetchAllQuestionsForSubject(subject.id),
     contentBase44.entities.PracticeTest.filter({ subject_id: subject.id }, "test_number", 2000).catch(() => []),
     contentBase44.entities.MockExam.filter({ subject_id: subject.id, is_active: true }, "exam_number", 200).catch(() => []),
@@ -93,9 +120,7 @@ export async function syncSubjectContentPackage(subject) {
 
   const topics = Array.isArray(topicsRaw) ? topicsRaw : [];
   const topicIds = new Set(topics.map((topic) => topic.id));
-  const notes = Array.isArray(notesRaw)
-    ? notesRaw.filter((note) => note.subject_id === subject.id || topicIds.has(note.topic_id))
-    : [];
+  const notes = await fetchNotesForSubjectTopics(subject.id, topics);
   const questions = Array.isArray(questionsRaw)
     ? questionsRaw.filter((question) => question.subject_id === subject.id || topicIds.has(question.topic_id))
     : [];
