@@ -8,7 +8,6 @@ export async function ensureOfflineSeedData({ force = false } = {}) {
 
   seedPromise = (async () => {
     const existingSubjects = await offlineDB.getAll(offlineDB.STORES.subjects).catch(() => []);
-    if (!force && existingSubjects.length > 0) return false;
 
     await Promise.all([
       offlineDB.putMany(offlineDB.STORES.subjects, offlineSeed.subjects),
@@ -30,7 +29,7 @@ export async function ensureOfflineSeedData({ force = false } = {}) {
       localStorage.setItem("zama_active_child_id", offlineSeed.childProfiles[0].id);
     } catch {}
 
-    return true;
+    return force || existingSubjects.length === 0;
   })();
 
   return seedPromise;

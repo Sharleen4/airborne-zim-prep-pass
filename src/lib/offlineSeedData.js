@@ -131,6 +131,31 @@ export const offlineSeed = {
       is_ai_generated: false,
       is_active: true,
     },
+    {
+      id: "seed_note_plants",
+      topic_id: "seed_topic_plants",
+      subject_id: "seed_subject_science_g7",
+      overview: "Plants are living things. They need water, sunlight, air, and good soil to grow well.",
+      key_definitions: "- Roots: the part that takes in water from the soil.\n- Stem: the part that holds the plant upright.\n- Leaves: the parts that help the plant make food.\n- Germination: when a seed starts to grow.\n- Seedling: a young plant.",
+      key_concepts: "A plant starts as a seed. With water and warmth, the seed opens and grows roots and a shoot. The leaves use sunlight, air, and water to help the plant make food.",
+      concept_examples: [
+        {
+          concept: "What plants need",
+          examples: [
+            { difficulty: "Easy", problem: "Tariro puts one bean seed in dry soil and one in moist soil. Which seed is more likely to grow?", solution: "Step 1: A seed needs water to start growing. Step 2: Moist soil has water. Answer = The seed in moist soil is more likely to grow." },
+            { difficulty: "Standard", problem: "A maize plant has water but is kept in a dark room. Why will it grow poorly?", solution: "Step 1: Green plants need sunlight. Step 2: Sunlight helps leaves make food. Step 3: A dark room has little sunlight. Answer = It will not make enough food." },
+            { difficulty: "Advanced", problem: "A school garden has two tomato plants. Plant A gets water and sunlight. Plant B gets water only. Which plant will be healthier after two weeks?", solution: "Step 1: Both plants get water. Step 2: Only Plant A gets sunlight. Step 3: Sunlight helps plants make food. Answer = Plant A will be healthier." }
+          ]
+        }
+      ],
+      zimbabwe_examples: "Farmers in Zimbabwe plant maize when there is enough rain. Vegetable gardens need watering in dry months. Pupils can grow beans in cups to observe roots and shoots.",
+      important_facts: "- Plants need water, sunlight, air, and soil.\n- Roots take in water.\n- Leaves help the plant make food.\n- Healthy plants grow better in good conditions.",
+      common_mistakes: "Do not think water alone is enough. A plant also needs sunlight and air. Do not pull seedlings from the soil when observing them.",
+      summary: "- A seed can grow into a plant.\n- Water helps seeds start growing.\n- Roots take in water.\n- Leaves help make food.\n- Sunlight helps plants grow strong.",
+      exam_tips: "Name the plant part asked for. Use words like roots, stem, leaves, water, sunlight, and air. Read diagrams carefully.",
+      is_ai_generated: false,
+      is_active: true,
+    },
   ],
   questions: [
     {
@@ -217,6 +242,15 @@ export const offlineSeed = {
       name: "Comprehension Starter Test",
       test_number: 1,
       question_ids: ["seed_q_comprehension_1"],
+      type: "curated",
+    },
+    {
+      id: "seed_practice_plants_1",
+      topic_id: "seed_topic_plants",
+      subject_id: "seed_subject_science_g7",
+      name: "Plant Growth Starter Test",
+      test_number: 1,
+      question_ids: ["seed_q_plants_1"],
       type: "curated",
     },
   ],
