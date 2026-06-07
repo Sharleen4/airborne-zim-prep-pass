@@ -24,6 +24,51 @@ import SchoolHomeworkCard from "@/components/home/SchoolHomeworkCard";
 import ClassAnnouncementsCard from "@/components/home/ClassAnnouncementsCard";
 import TrialExpiredBanner from "@/components/TrialExpiredBanner";
 
+function normalizeSubjectName(name) {
+  const normalized = String(name || "")
+    .toLowerCase()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+
+  const aliases = {
+    math: "mathematics",
+    maths: "mathematics",
+    science: "science and technology",
+    "social science": "social studies",
+    "social sciences": "social studies",
+  };
+
+  return aliases[normalized] || normalized;
+}
+
+function subjectDisplayKey(subject) {
+  return `${String(subject?.grade || "Ungraded").toLowerCase()}::${normalizeSubjectName(subject?.name)}`;
+}
+
+function isSeedSubject(subject) {
+  return String(subject?.id || "").startsWith("seed_");
+}
+
+function preferDisplaySubject(current, next) {
+  if (!current) return next;
+  if (isSeedSubject(current) !== isSeedSubject(next)) return isSeedSubject(current) ? next : current;
+  const currentUpdated = new Date(current.updated_date || current.created_date || 0).getTime() || 0;
+  const nextUpdated = new Date(next.updated_date || next.created_date || 0).getTime() || 0;
+  return nextUpdated > currentUpdated ? next : current;
+}
+
+function dedupeDisplaySubjects(subjects) {
+  const byKey = new Map();
+  (Array.isArray(subjects) ? subjects : [])
+    .filter((subject) => subject?.is_active !== false)
+    .forEach((subject) => {
+      const key = subjectDisplayKey(subject);
+      byKey.set(key, preferDisplaySubject(byKey.get(key), subject));
+    });
+  return [...byKey.values()];
+}
+
 export default function Home() {
   const { user } = useAuth();
   const { activeChild, activeChildId, childProfiles } = useActiveChild();
@@ -69,7 +114,7 @@ export default function Home() {
       user?.email ? offlineDB.getAll(offlineDB.STORES.studentResults) : Promise.resolve([])]
       );
 
-      subs = cachedSubs.filter((s) => s.is_active !== false);
+      subs = dedupeDisplaySubjects(cachedSubs);
       setSubjects(subs);
       const userResults = filterForActiveChild(
         cachedResults.filter((r) => r.student_email === user.email),
@@ -112,7 +157,7 @@ export default function Home() {
             getCachedSubjects().catch(() => null),
             user?.email ? getCachedResults(user.email).catch(() => null) : Promise.resolve(null)]
             );
-            if (freshSubs?.length) setSubjects(freshSubs);
+            if (freshSubs?.length) setSubjects(dedupeDisplaySubjects(freshSubs));
             if (freshResults?.length) {
               const scoped = filterForActiveChild(freshResults, activeChildId, childProfiles);
               setRecentResult(scoped[0] || null);
@@ -132,7 +177,7 @@ export default function Home() {
     if (!user || !activeChildId) return;
     if (!navigator.onLine) return;
     getCachedSubjects()
-      .then(fresh => { if (fresh?.length) setSubjects(fresh.filter(s => s.is_active !== false)); })
+      .then(fresh => { if (fresh?.length) setSubjects(dedupeDisplaySubjects(fresh)); })
       .catch(() => {});
   }, [activeChildId, user]);
 

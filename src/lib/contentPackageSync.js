@@ -88,8 +88,8 @@ function preferSubjectSummary(current, next) {
     return isSeedRecord(current.subject) ? next : current;
   }
 
-  const currentTotal = current.counts.topics + current.counts.notes + current.counts.questions + (current.counts.practiceTests || 0);
-  const nextTotal = next.counts.topics + next.counts.notes + next.counts.questions + (next.counts.practiceTests || 0);
+  const currentTotal = current.counts.topics + current.counts.notes + current.counts.questions + (current.counts.practiceTests || 0) + (current.counts.mockExams || 0);
+  const nextTotal = next.counts.topics + next.counts.notes + next.counts.questions + (next.counts.practiceTests || 0) + (next.counts.mockExams || 0);
   return nextTotal > currentTotal ? next : current;
 }
 
@@ -145,6 +145,15 @@ async function fetchTopicQuestions(topicId) {
     if (batch.length < QUESTION_PAGE_SIZE) break;
   }
   return all;
+}
+
+async function fetchQuestionById(questionId) {
+  const found = await withRateLimitRetry(
+    () => contentBase44.entities.Question.filter({ id: questionId }, "-updated_date", 1),
+    [],
+    { label: "referenced question" }
+  );
+  return Array.isArray(found) ? found[0] || null : null;
 }
 
 async function fetchNotesForSubjectTopics(subjectId, topics) {
@@ -217,14 +226,36 @@ async function fetchPracticeTestsForSubjectTopics(subjectId, topics) {
   return [...byId.values()].filter((test) => test.subject_id === subjectId || topicIds.has(test.topic_id));
 }
 
+async function backfillReferencedQuestions(questionMap, records) {
+  const referencedIds = new Set();
+  (Array.isArray(records) ? records : []).forEach((record) => {
+    (record?.question_ids || []).forEach((id) => {
+      if (id) referencedIds.add(id);
+    });
+  });
+
+  const missingIds = [...referencedIds].filter((id) => !questionMap.has(id));
+  for (const id of missingIds) {
+    await wait(TOPIC_CONTENT_DELAY_MS);
+    const question = await fetchQuestionById(id);
+    if (question?.id && question.is_active !== false) questionMap.set(question.id, question);
+  }
+
+  return {
+    referenced: referencedIds.size,
+    missing: [...referencedIds].filter((id) => !questionMap.has(id)).length,
+  };
+}
+
 export async function loadContentPackageSummary() {
-  const [subjects, packages, topics, notes, questions, practiceTests] = await Promise.all([
+  const [subjects, packages, topics, notes, questions, practiceTests, mockExams] = await Promise.all([
     offlineDB.getAll(offlineDB.STORES.subjects).catch(() => []),
     offlineDB.getAll(offlineDB.STORES.contentPackages).catch(() => []),
     offlineDB.getAll(offlineDB.STORES.topics).catch(() => []),
     offlineDB.getAll(offlineDB.STORES.notes).catch(() => []),
     offlineDB.getAll(offlineDB.STORES.questions).catch(() => []),
     offlineDB.getAll(offlineDB.STORES.practiceTests).catch(() => []),
+    offlineDB.getAll(offlineDB.STORES.mockExams).catch(() => []),
   ]);
 
   const packageById = new Map(packages.map((pkg) => [pkg.id, pkg]));
@@ -243,6 +274,7 @@ export async function loadContentPackageSummary() {
         notes: notes.filter((note) => note.subject_id === subject.id || topicIds.has(note.topic_id)).length,
         questions: questions.filter((question) => question.subject_id === subject.id || topicIds.has(question.topic_id)).length,
         practiceTests: practiceTests.filter((test) => test.subject_id === subject.id || topicIds.has(test.topic_id)).length,
+        mockExams: mockExams.filter((exam) => exam.subject_id === subject.id).length,
       },
     };
 
@@ -288,20 +320,23 @@ export async function syncSubjectContentPackage(subject) {
   const topics = Array.isArray(topicsRaw) ? topicsRaw : [];
   const notes = await fetchNotesForSubjectTopics(subject.id, topics);
   const questions = await fetchQuestionsForSubjectTopics(subject.id, topics);
+  const questionById = new Map(questions.map((question) => [question.id, question]));
   const practiceTests = await fetchPracticeTestsForSubjectTopics(subject.id, topics);
   const mockExams = Array.isArray(examsRaw) ? examsRaw : [];
+  const referencedQuestionCoverage = await backfillReferencedQuestions(questionById, [...practiceTests, ...mockExams]);
+  const completeQuestions = [...questionById.values()];
 
   await Promise.all([
     offlineDB.putOne(offlineDB.STORES.subjects, subject),
     offlineDB.putMany(offlineDB.STORES.topics, topics),
     offlineDB.putMany(offlineDB.STORES.notes, notes),
-    offlineDB.putMany(offlineDB.STORES.questions, questions),
+    offlineDB.putMany(offlineDB.STORES.questions, completeQuestions),
     offlineDB.putMany(offlineDB.STORES.practiceTests, practiceTests),
     offlineDB.putMany(offlineDB.STORES.mockExams, mockExams),
     offlineDB.putEntityRecord("Subject", subject),
     offlineDB.putEntityRecords("Topic", topics),
     offlineDB.putEntityRecords("Note", notes),
-    offlineDB.putEntityRecords("Question", questions),
+    offlineDB.putEntityRecords("Question", completeQuestions),
     offlineDB.putEntityRecords("PracticeTest", practiceTests),
     offlineDB.putEntityRecords("MockExam", mockExams),
   ]);
@@ -314,15 +349,17 @@ export async function syncSubjectContentPackage(subject) {
     grade: subject.grade || "",
     status: "downloaded",
     synced_at: syncedAt,
-    latest_content_at: latestDate([subject, ...topics, ...notes, ...questions, ...practiceTests, ...mockExams])
-      ? new Date(latestDate([subject, ...topics, ...notes, ...questions, ...practiceTests, ...mockExams])).toISOString()
+    latest_content_at: latestDate([subject, ...topics, ...notes, ...completeQuestions, ...practiceTests, ...mockExams])
+      ? new Date(latestDate([subject, ...topics, ...notes, ...completeQuestions, ...practiceTests, ...mockExams])).toISOString()
       : syncedAt,
     counts: {
       topics: topics.length,
       notes: notes.length,
-      questions: questions.length,
+      questions: completeQuestions.length,
       practiceTests: practiceTests.length,
       mockExams: mockExams.length,
+      referencedQuestions: referencedQuestionCoverage.referenced,
+      missingReferencedQuestions: referencedQuestionCoverage.missing,
     },
   };
   await offlineDB.putOne(offlineDB.STORES.contentPackages, metadata);

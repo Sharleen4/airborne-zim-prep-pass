@@ -65,9 +65,12 @@ export default function OfflineContentPage() {
     try {
       const result = await syncSubjectContentPackage(pkg.subject);
       await load();
-      const baseMessage = `${pkg.subject.grade || ""} ${pkg.subject.name}: synced ${result.counts.topics} topics, ${result.counts.notes} notes, ${result.counts.questions} questions, and ${result.counts.practiceTests} exercises.`;
+      const missingRefs = result.counts.missingReferencedQuestions || 0;
+      const baseMessage = `${pkg.subject.grade || ""} ${pkg.subject.name}: synced ${result.counts.topics} topics, ${result.counts.notes} notes, ${result.counts.questions} questions, ${result.counts.practiceTests} exercises, and ${result.counts.mockExams} exams.`;
       setMessage(
-        result.counts.topics > 0 && result.counts.notes === 0
+        missingRefs > 0
+          ? `${baseMessage} ${missingRefs} referenced question${missingRefs === 1 ? "" : "s"} could not be found online.`
+          : result.counts.topics > 0 && result.counts.notes === 0
           ? `${baseMessage} No published notes were found online for this subject yet.`
           : baseMessage
       );
@@ -173,11 +176,12 @@ export default function OfflineContentPage() {
                     </button>
                   </div>
 
-                  <div className="mt-4 grid grid-cols-4 gap-2">
+                  <div className="mt-4 grid grid-cols-5 gap-2">
                     <Stat label="Topics" value={pkg.package?.counts?.topics ?? pkg.counts.topics} />
                     <Stat label="Notes" value={pkg.package?.counts?.notes ?? pkg.counts.notes} />
                     <Stat label="Questions" value={pkg.package?.counts?.questions ?? pkg.counts.questions} />
                     <Stat label="Exercises" value={pkg.package?.counts?.practiceTests ?? pkg.counts.practiceTests} />
+                    <Stat label="Exams" value={pkg.package?.counts?.mockExams ?? pkg.counts.mockExams} />
                   </div>
                   <p className="mt-3 text-[11px] text-muted-foreground">
                     Last synced: {formatDate(pkg.package?.synced_at)}
