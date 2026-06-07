@@ -15,7 +15,7 @@ import { useActiveChild } from '@/lib/ActiveChildContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import UpdatePrompt from '@/components/UpdatePrompt';
 import LevelUpModal from '@/components/gamification/LevelUpModal';
-import AppBottomNav from '@/components/AppBottomNav';
+import GlobalBottomNav from '@/components/GlobalBottomNav';
 import ParentDashboardGate from '@/components/ParentDashboardGate';
 import Home from './pages/Home';
 import RoleHomeRedirect from './components/RoleHomeRedirect';
@@ -312,7 +312,7 @@ const AuthenticatedApp = () => {
     <>
       <AnimatedRoutes />
       {shouldShowOnboarding && <OnboardingWizard />}
-      <AppBottomNav />
+      <GlobalBottomNav />
       <ViewAsSwitcher />
       <Suspense fallback={null}><InstallBanner /></Suspense>
     </>
