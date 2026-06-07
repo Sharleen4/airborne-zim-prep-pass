@@ -25,18 +25,25 @@ function isRateLimitError(error) {
   return message.includes("rate limit") || message.includes("too many requests") || message.includes("429");
 }
 
-async function withRateLimitRetry(request, fallback = []) {
-  try {
-    return await request();
-  } catch (error) {
-    if (!isRateLimitError(error)) return fallback;
-    await wait(RATE_LIMIT_RETRY_DELAY_MS);
+async function withRateLimitRetry(request, fallback = [], options = {}) {
+  const { required = false, label = "request", retries = 2 } = options;
+  let lastError = null;
+
+  for (let attempt = 0; attempt <= retries; attempt += 1) {
     try {
       return await request();
-    } catch {
-      return fallback;
+    } catch (error) {
+      lastError = error;
+      if (!isRateLimitError(error) && attempt === 0) break;
+      if (attempt < retries) await wait(RATE_LIMIT_RETRY_DELAY_MS * (attempt + 1));
     }
   }
+
+  if (required) {
+    throw new Error(`Could not sync ${label}. ${lastError?.message || "Please try again."}`);
+  }
+
+  return fallback;
 }
 
 function packageIdFor(subject) {
@@ -112,8 +119,10 @@ async function fetchAllQuestionsForSubject(subjectId) {
 async function fetchAllNotes() {
   const all = [];
   for (let page = 0; page < 50; page += 1) {
-    const batch = await withRateLimitRetry(() =>
-      contentBase44.entities.Note.list("-updated_date", NOTE_PAGE_SIZE, page * NOTE_PAGE_SIZE)
+    const batch = await withRateLimitRetry(
+      () => contentBase44.entities.Note.list("-updated_date", NOTE_PAGE_SIZE, page * NOTE_PAGE_SIZE),
+      [],
+      { required: true, label: `notes page ${page + 1}` }
     );
     if (!Array.isArray(batch) || batch.length === 0) break;
     all.push(...batch);
@@ -125,6 +134,18 @@ async function fetchAllNotes() {
 async function fetchNotesForSubjectTopics(subjectId, topics) {
   const topicIds = new Set(topics.map((topic) => topic.id).filter(Boolean));
   const byId = new Map();
+  const subjectNotes = await withRateLimitRetry(
+    () => contentBase44.entities.Note.filter({ subject_id: subjectId }, "-updated_date", 5000),
+    [],
+    { required: true, label: "subject notes" }
+  );
+
+  (Array.isArray(subjectNotes) ? subjectNotes : [])
+    .filter((note) => note?.is_active !== false)
+    .forEach((note) => {
+      if (note?.id) byId.set(note.id, note);
+    });
+
   const allNotes = await fetchAllNotes();
   const matchingNotes = (Array.isArray(allNotes) ? allNotes : []).filter((note) => {
     if (note?.is_active === false) return false;
@@ -136,12 +157,17 @@ async function fetchNotesForSubjectTopics(subjectId, topics) {
   });
 
   const coveredTopicIds = new Set(matchingNotes.map((note) => note.topic_id).filter(Boolean));
+  (Array.isArray(subjectNotes) ? subjectNotes : []).forEach((note) => {
+    if (note?.topic_id) coveredTopicIds.add(note.topic_id);
+  });
   const missingTopicIds = [...topicIds].filter((topicId) => !coveredTopicIds.has(topicId));
 
   for (const topicId of missingTopicIds) {
     if (byId.size > 0) await wait(TOPIC_NOTE_BACKFILL_DELAY_MS);
-    const topicNotes = await withRateLimitRetry(() =>
-      contentBase44.entities.Note.filter({ topic_id: topicId }, "-updated_date", 20)
+    const topicNotes = await withRateLimitRetry(
+      () => contentBase44.entities.Note.filter({ topic_id: topicId }, "-updated_date", 20),
+      [],
+      { required: true, label: "topic notes" }
     );
     (Array.isArray(topicNotes) ? topicNotes : [])
       .filter((note) => note?.is_active !== false)

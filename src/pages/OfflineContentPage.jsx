@@ -65,7 +65,12 @@ export default function OfflineContentPage() {
     try {
       const result = await syncSubjectContentPackage(pkg.subject);
       await load();
-      setMessage(`${pkg.subject.grade || ""} ${pkg.subject.name}: synced ${result.counts.topics} topics, ${result.counts.notes} notes, and ${result.counts.questions} questions.`);
+      const baseMessage = `${pkg.subject.grade || ""} ${pkg.subject.name}: synced ${result.counts.topics} topics, ${result.counts.notes} notes, and ${result.counts.questions} questions.`;
+      setMessage(
+        result.counts.topics > 0 && result.counts.notes === 0
+          ? `${baseMessage} No published notes were found online for this subject yet.`
+          : baseMessage
+      );
     } catch (error) {
       setMessage(error?.message || "Content sync failed.");
     } finally {
