@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useTabState } from "@/hooks/useTabState";
-import { BookOpen, Zap, FileText, TrendingUp, ChevronRight, Star, Share2, Gamepad2, ClipboardList, FileSearch, Download, X, Smartphone, Share, Trophy } from "lucide-react";
+import { BookOpen, Zap, FileText, TrendingUp, ChevronRight, Star, Share2, Gamepad2, ClipboardList, FileSearch, Download, X, Smartphone, Share, Trophy, Home as HomeIcon, User as UserIcon, Layers as LayersIcon, DollarSign as DollarSignIcon } from "lucide-react";
 import { useInstallPrompt } from "@/hooks/useInstallPrompt";
 import ThemeToggle from "@/components/ThemeToggle";
 import { motion } from "framer-motion";
@@ -519,6 +519,7 @@ export default function Home() {
       </div>
 
       </PullToRefresh>
+      <SharedBottomNav active="home" />
       {/* Floating WhatsApp button */}
       <a
         href="https://wa.me/263786987358?text=Hi%20Zama%20Ai%20Primary%2C%20I%20need%20help%20with..."
@@ -563,4 +564,36 @@ function BottomNav({ active }) {
 
 }
 
-export { BottomNav };
+function SharedBottomNav({ active }) {
+  const { user } = useAuth();
+
+  const links = [
+    { to: "/home", label: "Home", Icon: HomeIcon, key: "home" },
+    { to: "/practice", label: "Practice", Icon: Zap, key: "practice" },
+    { to: "/mock-exam", label: "Exam", Icon: FileText, key: "exam" },
+    { to: "/progress", label: "Progress", Icon: TrendingUp, key: "progress" },
+    ...(user?.role === "admin" ? [{ to: "/flashcards", label: "Cards", Icon: LayersIcon, key: "flashcards" }] : []),
+    ...(user?.role === "teacher" ? [{ to: "/teacher-dashboard", label: "Earnings", Icon: DollarSignIcon, key: "teacher" }] : []),
+    { to: "/profile", label: "Profile", Icon: UserIcon, key: "profile" },
+  ];
+
+  return (
+    <div className="fixed bottom-0 left-0 right-0 bg-card border-t border-border px-2 pt-2.5 pb-safe flex justify-around z-50" style={{ paddingBottom: `max(0.5rem, env(safe-area-inset-bottom))` }}>
+      {links.map((link) => {
+        const isActive = active === link.key;
+        return (
+          <Link
+            key={link.key}
+            to={link.to}
+            className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-colors ${isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"}`}
+          >
+            <link.Icon className="h-6 w-6" strokeWidth={isActive ? 2.4 : 2} />
+            <span className={`text-[11px] ${isActive ? "font-semibold" : "font-medium"}`}>{link.label}</span>
+          </Link>
+        );
+      })}
+    </div>
+  );
+}
+
+export { SharedBottomNav as BottomNav };
