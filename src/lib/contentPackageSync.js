@@ -3,7 +3,9 @@ import { base44 } from "@/api/base44Client";
 import { offlineDB } from "@/lib/offlineDB";
 
 const QUESTION_PAGE_SIZE = 500;
+const NOTE_PAGE_SIZE = 500;
 const RATE_LIMIT_RETRY_DELAY_MS = 1800;
+const TOPIC_NOTE_BACKFILL_DELAY_MS = 250;
 
 const contentClient = createClient({
   appId: import.meta.env.VITE_BASE44_APP_ID,
@@ -107,14 +109,48 @@ async function fetchAllQuestionsForSubject(subjectId) {
   return all;
 }
 
+async function fetchAllNotes() {
+  const all = [];
+  for (let page = 0; page < 50; page += 1) {
+    const batch = await withRateLimitRetry(() =>
+      contentBase44.entities.Note.list("-updated_date", NOTE_PAGE_SIZE, page * NOTE_PAGE_SIZE)
+    );
+    if (!Array.isArray(batch) || batch.length === 0) break;
+    all.push(...batch);
+    if (batch.length < NOTE_PAGE_SIZE) break;
+  }
+  return all;
+}
+
 async function fetchNotesForSubjectTopics(subjectId, topics) {
   const topicIds = new Set(topics.map((topic) => topic.id).filter(Boolean));
-  const allNotes = await withRateLimitRetry(() => contentBase44.entities.Note.list("-updated_date", 5000));
-
-  return (Array.isArray(allNotes) ? allNotes : []).filter((note) => {
+  const byId = new Map();
+  const allNotes = await fetchAllNotes();
+  const matchingNotes = (Array.isArray(allNotes) ? allNotes : []).filter((note) => {
     if (note?.is_active === false) return false;
     return note.subject_id === subjectId || topicIds.has(note.topic_id);
   });
+
+  matchingNotes.forEach((note) => {
+    if (note?.id) byId.set(note.id, note);
+  });
+
+  const coveredTopicIds = new Set(matchingNotes.map((note) => note.topic_id).filter(Boolean));
+  const missingTopicIds = [...topicIds].filter((topicId) => !coveredTopicIds.has(topicId));
+
+  for (const topicId of missingTopicIds) {
+    if (byId.size > 0) await wait(TOPIC_NOTE_BACKFILL_DELAY_MS);
+    const topicNotes = await withRateLimitRetry(() =>
+      contentBase44.entities.Note.filter({ topic_id: topicId }, "-updated_date", 20)
+    );
+    (Array.isArray(topicNotes) ? topicNotes : [])
+      .filter((note) => note?.is_active !== false)
+      .forEach((note) => {
+        if (note?.id) byId.set(note.id, note);
+      });
+  }
+
+  return [...byId.values()];
 }
 
 export async function loadContentPackageSummary() {
