@@ -16,12 +16,8 @@ export function setPreviewAsFree(enabled) {
   window.dispatchEvent(new Event("zama_preview_mode_changed"));
 }
 
-// Returns plan info for the current user:
-//   { loading, isPremium, isFree, isTrial, isAdmin, isPreviewingAsFree }
-// "Premium" = active paid subscription (not trial).
-// "Free" = no active subscription OR currently on trial (trial users are nudged toward upgrade).
-// Admins always count as premium for gating purposes — UNLESS the
-// "Preview as free user" toggle is on (admin-only escape hatch for testing).
+// Full access = active, trial, admin/staff, or a valid offline activation cache.
+// Free/expired users stay in the app, but premium gates limit paid content.
 export function usePlan() {
   const { user } = useAuth();
   const subStatus = useSubscription(user || null);
@@ -38,19 +34,64 @@ export function usePlan() {
   }, []);
 
   if (subStatus === null) {
-    return { loading: true, isPremium: false, isFree: false, isTrial: false, isAdmin: false, isPreviewingAsFree: false };
+    return {
+      loading: true,
+      isPremium: false,
+      isFree: false,
+      isTrial: false,
+      isAdmin: false,
+      isStaff: false,
+      isExpired: false,
+      isOfflineCached: false,
+      offlineGraceDaysLeft: 0,
+      activationStatus: "loading",
+      isPreviewingAsFree: false,
+    };
   }
 
   const isAdmin = !!subStatus.isAdmin || user?.role === "admin";
+  const isStaff = !!subStatus.isStaff || user?.role === "teacher" || user?.role === "school_admin";
+  const activationStatus = subStatus.activation_status || subStatus.status || (subStatus.active ? "active" : "free");
+  const isTrial = activationStatus === "trial" || !!subStatus.isTrial;
+  const isOfflineCached = activationStatus === "offline_cached" || !!subStatus.isOfflineCached;
+  const isExpired = activationStatus === "expired" || !!subStatus.isExpired;
 
   // Admin preview-mode: force "free user" view for testing locked UI.
   if (isAdmin && previewFree) {
-    return { loading: false, isPremium: false, isFree: true, isTrial: false, isAdmin: true, isPreviewingAsFree: true };
+    return {
+      loading: false,
+      isPremium: false,
+      isFree: true,
+      isTrial: false,
+      isAdmin: true,
+      isStaff,
+      isExpired: false,
+      isOfflineCached: false,
+      offlineGraceDaysLeft: 0,
+      activationStatus: "free",
+      isPreviewingAsFree: true,
+    };
   }
 
-  const isTrial = !!subStatus.isTrial;
-  const isPremium = isAdmin || (!!subStatus.active && !isTrial);
+  const isPremium =
+    isAdmin ||
+    isStaff ||
+    activationStatus === "active" ||
+    activationStatus === "trial" ||
+    activationStatus === "offline_cached";
   const isFree = !isPremium;
 
-  return { loading: false, isPremium, isFree, isTrial, isAdmin, isPreviewingAsFree: false };
+  return {
+    loading: false,
+    isPremium,
+    isFree,
+    isTrial,
+    isAdmin,
+    isStaff,
+    isExpired,
+    isOfflineCached,
+    offlineGraceDaysLeft: subStatus.offline_grace_days_left || 0,
+    activationStatus,
+    isPreviewingAsFree: false,
+  };
 }

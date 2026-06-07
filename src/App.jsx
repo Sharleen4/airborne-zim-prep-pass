@@ -302,7 +302,14 @@ const AuthenticatedApp = () => {
   }
 
   // Pass expired-trial info so pages can show a "choose plan" banner instead of a hard paywall
-  window.__trialExpired = !!(subStatus && !subStatus.active);
+  const activationStatus = subStatus?.activation_status || subStatus?.status;
+  window.__activationStatus = activationStatus || "loading";
+  window.__trialExpired = activationStatus === "expired" || !!subStatus?.isExpired;
+  if (subStatus?.isOfflineCached) {
+    window.__offlineGraceDaysLeft = subStatus.offline_grace_days_left || 0;
+  } else {
+    delete window.__offlineGraceDaysLeft;
+  }
 
   // Routes that should NOT trigger the onboarding wizard overlay (admin/payment/profile etc.)
   const skipOnboardingRoutes = ["/admin", "/payment", "/payment-return", "/profile", "/teacher-dashboard", "/class-join"];

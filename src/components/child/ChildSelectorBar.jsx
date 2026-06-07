@@ -1,17 +1,14 @@
 import { useState, useRef, useEffect } from "react";
 import { useActiveChild } from "@/lib/ActiveChildContext";
 import { ChevronDown, Plus, Check, X, Lock } from "lucide-react";
-import { useSubscription } from "@/lib/useSubscription";
-import { useAuth } from "@/lib/AuthContext";
+import { usePlan } from "@/lib/usePlan";
 import AddChildModal from "./AddChildModal";
 import { Link } from "react-router-dom";
 
 // Premium parents can manage multiple children; free parents are limited to 1.
 export default function ChildSelectorBar() {
   const { activeChild, childProfiles, switchChild, reload } = useActiveChild();
-  const { user } = useAuth();
-  const subStatus = useSubscription(user || null);
-  const isPremium = !!subStatus?.active && !subStatus?.isTrial;
+  const { isPremium } = usePlan();
   const canAddMore = isPremium || childProfiles.length === 0;
 
   const [open, setOpen] = useState(false);

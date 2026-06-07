@@ -4,6 +4,7 @@ import { appParams } from '@/lib/app-params';
 import { createAxiosClient } from '@base44/sdk/dist/utils/axios-client';
 import { getViewAsRole, subscribeViewAs } from '@/lib/viewAs';
 import { ensureOfflineSeedData } from '@/lib/offlineSeed';
+import { clearActivationCache } from '@/lib/activationStatus';
 
 const AuthContext = createContext();
 
@@ -284,12 +285,13 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = (shouldRedirect = true) => {
+    const previousUser = user;
     setUser(null);
     setIsAuthenticated(false);
     try {
       localStorage.removeItem('cached_user');
       localStorage.removeItem('cached_user_token');
-      localStorage.removeItem('zama_sub_status'); // Clear subscription cache on logout
+      clearActivationCache(previousUser);
     } catch {}
     if (shouldRedirect) {
       // Always send the user to the public landing page after logout — never back

@@ -4,6 +4,7 @@ import { base44 } from "@/api/base44Client";
 import { useAuth } from "@/lib/AuthContext";
 import { useActiveChild } from "@/lib/ActiveChildContext";
 import { useSubscription } from "@/lib/useSubscription";
+import { usePlan } from "@/lib/usePlan";
 import { X, Loader2, Bell, Users } from "lucide-react";
 
 const GRADES = ["Grade 4", "Grade 5", "Grade 6", "Grade 7"];
@@ -13,8 +14,9 @@ export default function AddChildModal({ isOpen, onClose, onCreated, canDismiss =
   const { user } = useAuth();
   const { childProfiles, reload: reloadActiveChild } = useActiveChild();
   const subStatus = useSubscription(user || null);
+  const { isPremium } = usePlan();
   const isAdmin = user?.role === "admin";
-  const maxChildren = isAdmin ? Infinity : (subStatus?.maxChildren ?? 1);
+  const maxChildren = isAdmin ? Infinity : (isPremium ? (subStatus?.maxChildren ?? 4) : 1);
   const currentCount = childProfiles?.length || 0;
   const atLimit = currentCount >= maxChildren;
   const [name, setName] = useState("");

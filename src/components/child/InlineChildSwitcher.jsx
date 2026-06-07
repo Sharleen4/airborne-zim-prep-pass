@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useActiveChild } from "@/lib/ActiveChildContext";
-import { useAuth } from "@/lib/AuthContext";
-import { useSubscription } from "@/lib/useSubscription";
+import { usePlan } from "@/lib/usePlan";
 import { ChevronDown, Check, Plus, Lock, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import AddChildModal from "./AddChildModal";
@@ -10,9 +9,7 @@ import AddChildModal from "./AddChildModal";
 // Renders nothing if the user has only one child (or none).
 export default function InlineChildSwitcher() {
   const { activeChild, childProfiles, switchChild, reload } = useActiveChild();
-  const { user } = useAuth();
-  const subStatus = useSubscription(user || null);
-  const isPremium = !!subStatus?.active && !subStatus?.isTrial;
+  const { isPremium } = usePlan();
   const canAddMore = isPremium || childProfiles.length === 0;
 
   const [open, setOpen] = useState(false);

@@ -1,59 +1,58 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
+import {
+  activationFromCache,
+  cacheActivationIfAllowed,
+  normalizeActivationStatus,
+} from "@/lib/activationStatus";
 
 export function useSubscription(user) {
   const [subStatus, setSubStatus] = useState(null); // null = loading, { active, ... }
 
   useEffect(() => {
     if (!user) return;
+    const setAndCache = (rawStatus, source = "online") => {
+      const normalized = normalizeActivationStatus(user, rawStatus, { source });
+      cacheActivationIfAllowed(user, normalized);
+      setSubStatus(normalized);
+      return normalized;
+    };
+
     if (user.__localOfflinePreview) {
-      setSubStatus({ active: true, isLocalOfflinePreview: true });
+      setAndCache({ active: true, isLocalOfflinePreview: true });
       return;
     }
     // Admins bypass subscription check
     if (user.role === "admin") {
-      setSubStatus({ active: true, isAdmin: true });
+      setAndCache({ active: true, isAdmin: true });
       return;
     }
     // Teachers & school admins bypass subscription check (for testing)
     if (user.role === "teacher" || user.role === "school_admin") {
-      setSubStatus({ active: true, isStaff: true });
+      setAndCache({ active: true, isStaff: true });
       return;
     }
 
 
 
-    // Safety timeout: if the function doesn't respond in 6s, grant access from cache
+    // Safety timeout: if the function doesn't respond in 6s, use cached activation
+    // within the offline grace period, otherwise fall back to limited free mode.
     const timeout = setTimeout(() => {
-      try {
-        const cached = localStorage.getItem("zama_sub_status");
-        if (cached) setSubStatus(JSON.parse(cached));
-        else setSubStatus({ active: true, isTrial: true, days_left: 14 }); // fail open
-      } catch {
-        setSubStatus({ active: true, isTrial: true, days_left: 14 });
-      }
+      setSubStatus(activationFromCache(user));
     }, 6000);
 
     base44.functions.invoke("checkSubscription", {})
       .then(res => {
         clearTimeout(timeout);
-        setSubStatus(res.data);
-        try { localStorage.setItem("zama_sub_status", JSON.stringify(res.data)); } catch {}
+        setAndCache(res.data || {}, "online");
       })
       .catch(() => {
         clearTimeout(timeout);
-        // On error, try cache first, then fail open
-        try {
-          const cached = localStorage.getItem("zama_sub_status");
-          if (cached) setSubStatus(JSON.parse(cached));
-          else setSubStatus({ active: true });
-        } catch {
-          setSubStatus({ active: true });
-        }
+        setSubStatus(activationFromCache(user));
       });
 
     return () => clearTimeout(timeout);
-  }, [user?.email]);
+  }, [user?.email, user?.role, user?.__localOfflinePreview]);
 
   return subStatus;
 }
