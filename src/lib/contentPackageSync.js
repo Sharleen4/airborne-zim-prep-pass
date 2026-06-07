@@ -5,7 +5,7 @@ import { offlineDB } from "@/lib/offlineDB";
 const QUESTION_PAGE_SIZE = 500;
 const NOTE_PAGE_SIZE = 500;
 const RATE_LIMIT_RETRY_DELAY_MS = 1800;
-const TOPIC_NOTE_BACKFILL_DELAY_MS = 250;
+const TOPIC_CONTENT_DELAY_MS = 300;
 
 const contentClient = createClient({
   appId: import.meta.env.VITE_BASE44_APP_ID,
@@ -83,8 +83,8 @@ function preferSubjectSummary(current, next) {
     return isSeedRecord(current.subject) ? next : current;
   }
 
-  const currentTotal = current.counts.topics + current.counts.notes + current.counts.questions;
-  const nextTotal = next.counts.topics + next.counts.notes + next.counts.questions;
+  const currentTotal = current.counts.topics + current.counts.notes + current.counts.questions + (current.counts.practiceTests || 0);
+  const nextTotal = next.counts.topics + next.counts.notes + next.counts.questions + (next.counts.practiceTests || 0);
   return nextTotal > currentTotal ? next : current;
 }
 
@@ -108,6 +108,32 @@ async function fetchAllQuestionsForSubject(subjectId) {
         QUESTION_PAGE_SIZE,
         page * QUESTION_PAGE_SIZE
       )
+    );
+    if (!Array.isArray(batch) || batch.length === 0) break;
+    all.push(...batch);
+    if (batch.length < QUESTION_PAGE_SIZE) break;
+  }
+  return all;
+}
+
+function putById(map, records) {
+  (Array.isArray(records) ? records : []).forEach((record) => {
+    if (record?.id && record.is_active !== false) map.set(record.id, record);
+  });
+}
+
+async function fetchTopicQuestions(topicId) {
+  const all = [];
+  for (let page = 0; page < 20; page += 1) {
+    const batch = await withRateLimitRetry(
+      () => contentBase44.entities.Question.filter(
+        { topic_id: topicId, is_active: true },
+        "created_date",
+        QUESTION_PAGE_SIZE,
+        page * QUESTION_PAGE_SIZE
+      ),
+      [],
+      { required: true, label: "topic questions" }
     );
     if (!Array.isArray(batch) || batch.length === 0) break;
     all.push(...batch);
@@ -163,7 +189,7 @@ async function fetchNotesForSubjectTopics(subjectId, topics) {
   const missingTopicIds = [...topicIds].filter((topicId) => !coveredTopicIds.has(topicId));
 
   for (const topicId of missingTopicIds) {
-    if (byId.size > 0) await wait(TOPIC_NOTE_BACKFILL_DELAY_MS);
+    if (byId.size > 0) await wait(TOPIC_CONTENT_DELAY_MS);
     const topicNotes = await withRateLimitRetry(
       () => contentBase44.entities.Note.filter({ topic_id: topicId }, "-updated_date", 20),
       [],
@@ -179,13 +205,52 @@ async function fetchNotesForSubjectTopics(subjectId, topics) {
   return [...byId.values()];
 }
 
+async function fetchQuestionsForSubjectTopics(subjectId, topics) {
+  const topicIds = new Set(topics.map((topic) => topic.id).filter(Boolean));
+  const byId = new Map();
+  const subjectQuestions = await fetchAllQuestionsForSubject(subjectId);
+  putById(byId, subjectQuestions);
+
+  for (const topicId of topicIds) {
+    await wait(TOPIC_CONTENT_DELAY_MS);
+    const topicQuestions = await fetchTopicQuestions(topicId);
+    putById(byId, topicQuestions);
+  }
+
+  return [...byId.values()].filter((question) => question.subject_id === subjectId || topicIds.has(question.topic_id));
+}
+
+async function fetchPracticeTestsForSubjectTopics(subjectId, topics) {
+  const topicIds = new Set(topics.map((topic) => topic.id).filter(Boolean));
+  const byId = new Map();
+  const subjectTests = await withRateLimitRetry(
+    () => contentBase44.entities.PracticeTest.filter({ subject_id: subjectId }, "test_number", 2000),
+    [],
+    { required: true, label: "subject exercises" }
+  );
+  putById(byId, subjectTests);
+
+  for (const topicId of topicIds) {
+    await wait(TOPIC_CONTENT_DELAY_MS);
+    const topicTests = await withRateLimitRetry(
+      () => contentBase44.entities.PracticeTest.filter({ topic_id: topicId }, "test_number", 100),
+      [],
+      { required: true, label: "topic exercises" }
+    );
+    putById(byId, topicTests);
+  }
+
+  return [...byId.values()].filter((test) => test.subject_id === subjectId || topicIds.has(test.topic_id));
+}
+
 export async function loadContentPackageSummary() {
-  const [subjects, packages, topics, notes, questions] = await Promise.all([
+  const [subjects, packages, topics, notes, questions, practiceTests] = await Promise.all([
     offlineDB.getAll(offlineDB.STORES.subjects).catch(() => []),
     offlineDB.getAll(offlineDB.STORES.contentPackages).catch(() => []),
     offlineDB.getAll(offlineDB.STORES.topics).catch(() => []),
     offlineDB.getAll(offlineDB.STORES.notes).catch(() => []),
     offlineDB.getAll(offlineDB.STORES.questions).catch(() => []),
+    offlineDB.getAll(offlineDB.STORES.practiceTests).catch(() => []),
   ]);
 
   const packageById = new Map(packages.map((pkg) => [pkg.id, pkg]));
@@ -203,6 +268,7 @@ export async function loadContentPackageSummary() {
         topics: subjectTopics.length,
         notes: notes.filter((note) => note.subject_id === subject.id || topicIds.has(note.topic_id)).length,
         questions: questions.filter((question) => question.subject_id === subject.id || topicIds.has(question.topic_id)).length,
+        practiceTests: practiceTests.filter((test) => test.subject_id === subject.id || topicIds.has(test.topic_id)).length,
       },
     };
 
@@ -227,22 +293,15 @@ export async function syncSubjectContentPackage(subject) {
   if (!subject?.id) throw new Error("Subject is required");
   if (!navigator.onLine) throw new Error("Connect to the internet to sync content");
 
-  const [topicsRaw, questionsRaw, testsRaw, examsRaw] = await Promise.all([
+  const [topicsRaw, examsRaw] = await Promise.all([
     withRateLimitRetry(() => contentBase44.entities.Topic.filter({ subject_id: subject.id, is_active: true }, "order", 2000)),
-    fetchAllQuestionsForSubject(subject.id),
-    withRateLimitRetry(() => contentBase44.entities.PracticeTest.filter({ subject_id: subject.id }, "test_number", 2000)),
     withRateLimitRetry(() => contentBase44.entities.MockExam.filter({ subject_id: subject.id, is_active: true }, "exam_number", 200)),
   ]);
 
   const topics = Array.isArray(topicsRaw) ? topicsRaw : [];
-  const topicIds = new Set(topics.map((topic) => topic.id));
   const notes = await fetchNotesForSubjectTopics(subject.id, topics);
-  const questions = Array.isArray(questionsRaw)
-    ? questionsRaw.filter((question) => question.subject_id === subject.id || topicIds.has(question.topic_id))
-    : [];
-  const practiceTests = Array.isArray(testsRaw)
-    ? testsRaw.filter((test) => test.subject_id === subject.id || topicIds.has(test.topic_id))
-    : [];
+  const questions = await fetchQuestionsForSubjectTopics(subject.id, topics);
+  const practiceTests = await fetchPracticeTestsForSubjectTopics(subject.id, topics);
   const mockExams = Array.isArray(examsRaw) ? examsRaw : [];
 
   await Promise.all([
