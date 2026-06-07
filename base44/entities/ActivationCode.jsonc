@@ -1,0 +1,87 @@
+{
+  "name": "ActivationCode",
+  "type": "object",
+  "properties": {
+    "code": {
+      "type": "string",
+      "description": "Unique activation code entered in the offline app."
+    },
+    "phone_number": {
+      "type": "string",
+      "description": "Parent phone number allowed to use this code. Leave empty to bind on first use."
+    },
+    "plan": {
+      "type": "string",
+      "enum": [
+        "monthly",
+        "quarterly",
+        "yearly_premium",
+        "monthly_premium",
+        "family_quarterly",
+        "family_yearly",
+        "founding_2026",
+        "premium"
+      ],
+      "default": "monthly_premium"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "available",
+        "active",
+        "used",
+        "expired",
+        "revoked"
+      ],
+      "default": "available"
+    },
+    "expiry_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Last date this activation should grant access."
+    },
+    "child_limit": {
+      "type": "number",
+      "default": 1
+    },
+    "device_binding": {
+      "type": "boolean",
+      "default": true
+    },
+    "bound_device_id": {
+      "type": "string"
+    },
+    "activated_user_email": {
+      "type": "string"
+    },
+    "activated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "last_verified_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "activation_count": {
+      "type": "number",
+      "default": 0
+    },
+    "max_activations": {
+      "type": "number",
+      "default": 1
+    },
+    "notes": {
+      "type": "string",
+      "maxLength": 1000
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000
+    }
+  },
+  "required": [
+    "code",
+    "plan",
+    "expiry_date"
+  ]
+}

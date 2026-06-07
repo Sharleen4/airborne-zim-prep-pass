@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { useAuth } from "@/lib/AuthContext";
-import { CheckCircle, Zap, Star, Crown, Users, Copy, CheckCircle2, Loader2, Gift, Phone, ArrowLeft } from "lucide-react";
+import { CheckCircle, Zap, Star, Crown, Users, Copy, CheckCircle2, Loader2, Gift, Phone, ArrowLeft, KeyRound } from "lucide-react";
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import FoundingOfferCard from "@/components/founding/FoundingOfferCard";
 
 // Individual paid plans (one child) — prices aligned with /pricing page
@@ -513,6 +513,19 @@ export default function PaymentPage() {
             <p className="text-xs text-red-600 font-medium mt-1">{error}</p>
           )}
         </div>
+
+        <Link
+          to="/activation"
+          className="flex items-center gap-3 rounded-2xl border border-primary/30 bg-primary/5 p-4 text-left hover:bg-primary/10 transition-colors"
+        >
+          <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-primary/10">
+            <KeyRound className="h-5 w-5 text-primary" />
+          </div>
+          <div>
+            <p className="text-sm font-bold text-foreground">Already have an activation code?</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">Enter your code to activate this device without starting a new payment.</p>
+          </div>
+        </Link>
 
         {/* Tab switcher */}
         <div className="flex bg-muted rounded-2xl p-1 gap-1 flex-wrap">

@@ -8,9 +8,23 @@ import {
 
 export function useSubscription(user) {
   const [subStatus, setSubStatus] = useState(null); // null = loading, { active, ... }
+  const [refreshNonce, setRefreshNonce] = useState(0);
 
   useEffect(() => {
-    if (!user) return;
+    const refresh = () => setRefreshNonce((value) => value + 1);
+    window.addEventListener("zama_activation_changed", refresh);
+    window.addEventListener("storage", refresh);
+    return () => {
+      window.removeEventListener("zama_activation_changed", refresh);
+      window.removeEventListener("storage", refresh);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!user) {
+      setSubStatus(null);
+      return;
+    }
     const setAndCache = (rawStatus, source = "online") => {
       const normalized = normalizeActivationStatus(user, rawStatus, { source });
       cacheActivationIfAllowed(user, normalized);
@@ -52,7 +66,7 @@ export function useSubscription(user) {
       });
 
     return () => clearTimeout(timeout);
-  }, [user?.email, user?.role, user?.__localOfflinePreview]);
+  }, [user?.email, user?.role, user?.__localOfflinePreview, refreshNonce]);
 
   return subStatus;
 }

@@ -28,6 +28,7 @@ import NotesPage from './pages/NotesPage';
 import MockExamPage from './pages/MockExamPage';
 import PaymentPage from './pages/PaymentPage';
 import PaymentReturnPage from './pages/PaymentReturnPage';
+import ActivationPage from './pages/ActivationPage';
 import TermsPage from './pages/TermsPage';
 import PrivacyPage from './pages/PrivacyPage';
 import HelpPage from './pages/HelpPage';
@@ -131,6 +132,7 @@ function AnimatedRoutes() {
         <Route path="/bookmarks" element={<PageTransition><Suspense fallback={<PageLoader />}><BookmarkPage /></Suspense></PageTransition>} />
         <Route path="/payment" element={<PageTransition><PaymentPage /></PageTransition>} />
         <Route path="/payment-return" element={<PageTransition><PaymentReturnPage /></PageTransition>} />
+        <Route path="/activation" element={<PageTransition><ActivationPage /></PageTransition>} />
         <Route path="/terms" element={<PageTransition><TermsPage /></PageTransition>} />
         <Route path="/privacy" element={<PageTransition><PrivacyPage /></PageTransition>} />
         <Route path="/privacy-policy" element={<PageTransition><PrivacyPage /></PageTransition>} />
@@ -312,7 +314,7 @@ const AuthenticatedApp = () => {
   }
 
   // Routes that should NOT trigger the onboarding wizard overlay (admin/payment/profile etc.)
-  const skipOnboardingRoutes = ["/admin", "/payment", "/payment-return", "/profile", "/teacher-dashboard", "/class-join"];
+  const skipOnboardingRoutes = ["/admin", "/payment", "/payment-return", "/activation", "/profile", "/teacher-dashboard", "/class-join"];
   const shouldShowOnboarding = !skipOnboardingRoutes.some(r => currentPath.startsWith(r)) && user?.role !== "admin";
 
   return (

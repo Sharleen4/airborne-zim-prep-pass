@@ -21,12 +21,20 @@ export default function TrialExpiredBanner() {
             You can keep using all free content. Upgrade to unlock premium topics & mock exams.
           </p>
         </div>
-        <Link
-          to="/payment"
-          className="text-xs font-bold bg-amber-500 text-white px-3 py-2 rounded-xl flex-shrink-0 hover:opacity-90 transition-opacity"
-        >
-          Upgrade
-        </Link>
+        <div className="flex flex-shrink-0 gap-2">
+          <Link
+            to="/activation"
+            className="text-xs font-bold border border-amber-500/50 text-amber-700 dark:text-amber-200 px-3 py-2 rounded-xl hover:bg-amber-500/10 transition-colors"
+          >
+            Code
+          </Link>
+          <Link
+            to="/payment"
+            className="text-xs font-bold bg-amber-500 text-white px-3 py-2 rounded-xl hover:opacity-90 transition-opacity"
+          >
+            Upgrade
+          </Link>
+        </div>
       </div>
     </div>
   );

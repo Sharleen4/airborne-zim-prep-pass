@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "@/lib/AuthContext";
 import { useTabState } from "@/hooks/useTabState";
 import { base44 } from "@/api/base44Client";
-import { User, LogOut, Mail, Shield, Trash2, AlertTriangle, Settings, HelpCircle, Gift, Phone, Save, Pencil, DownloadCloud } from "lucide-react";
+import { User, LogOut, Mail, Shield, Trash2, AlertTriangle, Settings, HelpCircle, Gift, Phone, Save, Pencil, DownloadCloud, KeyRound } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
 import ShareModal from "@/components/ShareModal";
 import SubscriptionStatusCard from "@/components/SubscriptionStatusCard";
@@ -208,6 +208,14 @@ export default function ProfilePage() {
         >
           <DownloadCloud className="w-5 h-5 text-primary" />
           Offline Content
+        </Link>
+
+        <Link
+          to="/activation"
+          className="w-full flex items-center justify-center gap-3 bg-card border border-border text-foreground font-semibold py-4 rounded-2xl hover:bg-secondary transition-colors"
+        >
+          <KeyRound className="w-5 h-5 text-primary" />
+          Activate with Code
         </Link>
 
         {/* Referral Link */}

@@ -70,6 +70,8 @@ export default function OfflineContentPage() {
       setMessage(
         missingRefs > 0
           ? `${baseMessage} ${missingRefs} referenced question${missingRefs === 1 ? "" : "s"} could not be found online.`
+          : result.counts.mockExams === 0
+          ? `${baseMessage} No active mock exams were found online for this subject yet.`
           : result.counts.topics > 0 && result.counts.notes === 0
           ? `${baseMessage} No published notes were found online for this subject yet.`
           : baseMessage
@@ -186,6 +188,16 @@ export default function OfflineContentPage() {
                   <p className="mt-3 text-[11px] text-muted-foreground">
                     Last synced: {formatDate(pkg.package?.synced_at)}
                   </p>
+                  {downloaded && (pkg.package?.counts?.mockExams ?? 0) === 0 && (
+                    <p className="mt-2 rounded-xl bg-amber-500/10 px-3 py-2 text-[11px] font-semibold text-amber-700 dark:text-amber-300">
+                      No mock exams cached for this subject. In Base44, check that exams are active, linked to this subject, and have question IDs.
+                    </p>
+                  )}
+                  {downloaded && (pkg.package?.counts?.missingReferencedQuestions ?? 0) > 0 && (
+                    <p className="mt-2 rounded-xl bg-destructive/10 px-3 py-2 text-[11px] font-semibold text-destructive">
+                      {pkg.package.counts.missingReferencedQuestions} referenced question{pkg.package.counts.missingReferencedQuestions === 1 ? "" : "s"} missing from Base44.
+                    </p>
+                  )}
                 </div>
               );
             })}

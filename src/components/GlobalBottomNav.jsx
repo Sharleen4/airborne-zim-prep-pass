@@ -16,6 +16,7 @@ const STUDENT_PARENT_ROUTES = [
   "/parent",
   "/homework",
   "/profile",
+  "/activation",
   "/offline-content",
   "/leaderboard",
   "/english",
@@ -33,6 +34,7 @@ function activeKeyFor(pathname) {
   if (pathname.startsWith("/progress") || pathname.startsWith("/leaderboard")) return "progress";
   if (
     pathname.startsWith("/profile") ||
+    pathname.startsWith("/activation") ||
     pathname.startsWith("/parent") ||
     pathname.startsWith("/homework") ||
     pathname.startsWith("/bookmarks") ||

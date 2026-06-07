@@ -41,6 +41,28 @@ export default function SubscriptionStatusCard({ user }) {
     );
   }
 
+  if (sub.isOfflineCached) {
+    return (
+      <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
+        <div className="bg-gradient-to-r from-emerald-500 to-teal-600 px-5 py-3 flex items-center gap-2 text-white">
+          <CheckCircle className="w-4 h-4" />
+          <p className="font-bold text-sm">Offline Access Active</p>
+        </div>
+        <div className="px-5 py-4 space-y-3">
+          <p className="text-sm text-foreground">
+            This device is using cached activation. {sub.offline_grace_days_left || 0} day{sub.offline_grace_days_left === 1 ? "" : "s"} left before it needs an online check.
+          </p>
+          <Link
+            to="/activation"
+            className="w-full border border-primary/40 text-primary text-sm font-semibold py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-primary/5 transition-colors"
+          >
+            <Sparkles className="w-4 h-4" /> Refresh with activation code
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   // Admin
   if (sub.isAdmin) {
     return (
@@ -100,6 +122,12 @@ export default function SubscriptionStatusCard({ user }) {
             className="w-full bg-primary text-white text-sm font-semibold py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-primary/90 transition-colors"
           >
             <Sparkles className="w-4 h-4" /> Renew Subscription
+          </Link>
+          <Link
+            to="/activation"
+            className="w-full border border-primary/40 text-primary text-sm font-semibold py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-primary/5 transition-colors"
+          >
+            Enter activation code
           </Link>
         </div>
       </div>

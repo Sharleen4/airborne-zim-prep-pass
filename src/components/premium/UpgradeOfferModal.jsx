@@ -80,13 +80,20 @@ export default function UpgradeOfferModal({ featureName = "This feature", featur
           </div>
 
           {/* Actions */}
-          <div className="grid grid-cols-2 gap-2 pt-1">
+          <div className="grid grid-cols-3 gap-2 pt-1">
             <button
               onClick={onClose}
               className="border border-border text-foreground font-semibold py-3 rounded-xl text-sm hover:bg-secondary"
             >
               Continue Free
             </button>
+            <Link
+              to="/activation"
+              onClick={onClose}
+              className="border border-primary/40 text-primary font-bold py-3 rounded-xl text-sm text-center hover:bg-primary/5"
+            >
+              Enter Code
+            </Link>
             <Link
               to="/payment"
               onClick={onClose}
