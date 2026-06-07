@@ -3,6 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { offlineDB } from "@/lib/offlineDB";
 
 const QUESTION_PAGE_SIZE = 500;
+const RATE_LIMIT_RETRY_DELAY_MS = 1800;
 
 const contentClient = createClient({
   appId: import.meta.env.VITE_BASE44_APP_ID,
@@ -10,6 +11,31 @@ const contentClient = createClient({
 });
 
 const contentBase44 = import.meta.env.VITE_BASE44_API_KEY ? contentClient : base44;
+
+function wait(ms) {
+  return new Promise((resolve) => {
+    window.setTimeout(resolve, ms);
+  });
+}
+
+function isRateLimitError(error) {
+  const message = String(error?.message || error || "").toLowerCase();
+  return message.includes("rate limit") || message.includes("too many requests") || message.includes("429");
+}
+
+async function withRateLimitRetry(request, fallback = []) {
+  try {
+    return await request();
+  } catch (error) {
+    if (!isRateLimitError(error)) return fallback;
+    await wait(RATE_LIMIT_RETRY_DELAY_MS);
+    try {
+      return await request();
+    } catch {
+      return fallback;
+    }
+  }
+}
 
 function packageIdFor(subject) {
   const grade = subject.grade || "Ungraded";
@@ -29,12 +55,14 @@ function latestDate(items) {
 async function fetchAllQuestionsForSubject(subjectId) {
   const all = [];
   for (let page = 0; page < 50; page += 1) {
-    const batch = await contentBase44.entities.Question.filter(
-      { subject_id: subjectId, is_active: true },
-      "-updated_date",
-      QUESTION_PAGE_SIZE,
-      page * QUESTION_PAGE_SIZE
-    ).catch(() => []);
+    const batch = await withRateLimitRetry(() =>
+      contentBase44.entities.Question.filter(
+        { subject_id: subjectId, is_active: true },
+        "-updated_date",
+        QUESTION_PAGE_SIZE,
+        page * QUESTION_PAGE_SIZE
+      )
+    );
     if (!Array.isArray(batch) || batch.length === 0) break;
     all.push(...batch);
     if (batch.length < QUESTION_PAGE_SIZE) break;
@@ -43,31 +71,13 @@ async function fetchAllQuestionsForSubject(subjectId) {
 }
 
 async function fetchNotesForSubjectTopics(subjectId, topics) {
-  const topicIds = topics.map((topic) => topic.id).filter(Boolean);
-  const byId = new Map();
+  const topicIds = new Set(topics.map((topic) => topic.id).filter(Boolean));
+  const allNotes = await withRateLimitRetry(() => contentBase44.entities.Note.list("-updated_date", 5000));
 
-  const subjectNotes = await contentBase44.entities.Note.filter(
-    { subject_id: subjectId },
-    "-updated_date",
-    5000
-  ).catch(() => []);
-  (Array.isArray(subjectNotes) ? subjectNotes : []).forEach((note) => {
-    if (note?.id) byId.set(note.id, note);
+  return (Array.isArray(allNotes) ? allNotes : []).filter((note) => {
+    if (note?.is_active === false) return false;
+    return note.subject_id === subjectId || topicIds.has(note.topic_id);
   });
-
-  for (let i = 0; i < topicIds.length; i += 8) {
-    const batchIds = topicIds.slice(i, i + 8);
-    const batches = await Promise.all(
-      batchIds.map((topicId) =>
-        contentBase44.entities.Note.filter({ topic_id: topicId }, "-updated_date", 100).catch(() => [])
-      )
-    );
-    batches.flat().forEach((note) => {
-      if (note?.id) byId.set(note.id, note);
-    });
-  }
-
-  return [...byId.values()].filter((note) => note.is_active !== false);
 }
 
 export async function loadContentPackageSummary() {
@@ -98,7 +108,7 @@ export async function loadContentPackageSummary() {
 }
 
 export async function fetchRemoteSubjects() {
-  const remote = await contentBase44.entities.Subject.filter({ is_active: true }, "grade", 500);
+  const remote = await withRateLimitRetry(() => contentBase44.entities.Subject.filter({ is_active: true }, "grade", 500));
   const subjects = Array.isArray(remote) ? remote : [];
   if (subjects.length) {
     await offlineDB.putMany(offlineDB.STORES.subjects, subjects);
@@ -112,10 +122,10 @@ export async function syncSubjectContentPackage(subject) {
   if (!navigator.onLine) throw new Error("Connect to the internet to sync content");
 
   const [topicsRaw, questionsRaw, testsRaw, examsRaw] = await Promise.all([
-    contentBase44.entities.Topic.filter({ subject_id: subject.id, is_active: true }, "order", 2000).catch(() => []),
+    withRateLimitRetry(() => contentBase44.entities.Topic.filter({ subject_id: subject.id, is_active: true }, "order", 2000)),
     fetchAllQuestionsForSubject(subject.id),
-    contentBase44.entities.PracticeTest.filter({ subject_id: subject.id }, "test_number", 2000).catch(() => []),
-    contentBase44.entities.MockExam.filter({ subject_id: subject.id, is_active: true }, "exam_number", 200).catch(() => []),
+    withRateLimitRetry(() => contentBase44.entities.PracticeTest.filter({ subject_id: subject.id }, "test_number", 2000)),
+    withRateLimitRetry(() => contentBase44.entities.MockExam.filter({ subject_id: subject.id, is_active: true }, "exam_number", 200)),
   ]);
 
   const topics = Array.isArray(topicsRaw) ? topicsRaw : [];
