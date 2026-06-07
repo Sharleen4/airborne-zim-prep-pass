@@ -60,6 +60,7 @@ function normalizeSubjectName(name) {
   const aliases = {
     math: "mathematics",
     maths: "mathematics",
+    science: "science and technology",
     "social science": "social studies",
     "social sciences": "social studies",
   };
@@ -73,6 +74,11 @@ function subjectGroupKey(subject) {
 
 function isSeedRecord(item) {
   return String(item?.id || "").startsWith("seed_");
+}
+
+function subjectMatchesRemote(localSubject, remoteSubjects) {
+  const key = subjectGroupKey(localSubject);
+  return remoteSubjects.some((subject) => subject.id === localSubject.id || subjectGroupKey(subject) === key);
 }
 
 function preferSubjectSummary(current, next) {
@@ -251,6 +257,19 @@ export async function fetchRemoteSubjects() {
   const remote = await withRateLimitRetry(() => contentBase44.entities.Subject.filter({ is_active: true }, "grade", 500));
   const subjects = Array.isArray(remote) ? remote : [];
   if (subjects.length) {
+    const cachedSubjects = await offlineDB.getAll(offlineDB.STORES.subjects).catch(() => []);
+    const staleSubjects = cachedSubjects.filter((subject) =>
+      !isSeedRecord(subject) && !subjectMatchesRemote(subject, subjects)
+    );
+
+    await Promise.all(
+      staleSubjects.flatMap((subject) => [
+        offlineDB.deleteOne(offlineDB.STORES.subjects, subject.id),
+        offlineDB.deleteEntityRecord("Subject", subject.id),
+        offlineDB.deleteOne(offlineDB.STORES.contentPackages, packageIdFor(subject)),
+      ])
+    );
+
     await offlineDB.putMany(offlineDB.STORES.subjects, subjects);
     await offlineDB.putEntityRecords("Subject", subjects);
   }
