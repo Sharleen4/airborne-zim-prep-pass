@@ -42,6 +42,43 @@ function packageIdFor(subject) {
   return `${grade}:${subject.id}`;
 }
 
+function normalizeSubjectName(name) {
+  const normalized = String(name || "")
+    .toLowerCase()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+
+  const aliases = {
+    math: "mathematics",
+    maths: "mathematics",
+    "social science": "social studies",
+    "social sciences": "social studies",
+  };
+
+  return aliases[normalized] || normalized;
+}
+
+function subjectGroupKey(subject) {
+  return `${String(subject?.grade || "Ungraded").toLowerCase()}::${normalizeSubjectName(subject?.name)}`;
+}
+
+function isSeedRecord(item) {
+  return String(item?.id || "").startsWith("seed_");
+}
+
+function preferSubjectSummary(current, next) {
+  if (!current) return next;
+  if (!!next.package !== !!current.package) return next.package ? next : current;
+  if (isSeedRecord(current.subject) !== isSeedRecord(next.subject)) {
+    return isSeedRecord(current.subject) ? next : current;
+  }
+
+  const currentTotal = current.counts.topics + current.counts.notes + current.counts.questions;
+  const nextTotal = next.counts.topics + next.counts.notes + next.counts.questions;
+  return nextTotal > currentTotal ? next : current;
+}
+
 function latestDate(items) {
   return items.reduce((latest, item) => {
     const value = item?.updated_date || item?.created_date || item?.cached_at;
@@ -90,11 +127,13 @@ export async function loadContentPackageSummary() {
   ]);
 
   const packageById = new Map(packages.map((pkg) => [pkg.id, pkg]));
-  return subjects.map((subject) => {
+  const deduped = new Map();
+
+  subjects.forEach((subject) => {
     const id = packageIdFor(subject);
     const subjectTopics = topics.filter((topic) => topic.subject_id === subject.id);
     const topicIds = new Set(subjectTopics.map((topic) => topic.id));
-    return {
+    const summary = {
       id,
       subject,
       package: packageById.get(id) || null,
@@ -104,7 +143,12 @@ export async function loadContentPackageSummary() {
         questions: questions.filter((question) => question.subject_id === subject.id || topicIds.has(question.topic_id)).length,
       },
     };
+
+    const key = subjectGroupKey(subject);
+    deduped.set(key, preferSubjectSummary(deduped.get(key), summary));
   });
+
+  return [...deduped.values()];
 }
 
 export async function fetchRemoteSubjects() {
